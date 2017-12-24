@@ -21,8 +21,8 @@ if ($id) {
 }
 $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
 $meeturl = '';
-$gototrainingdownloads = array();
-$gotomeeting = get_gotomeeting($gotomeeting);
+
+$gotomeeting_joinurl = get_gotomeeting($gotomeeting);
 $meeturl = $gotomeeting;
 
 $meetinginfo = json_decode($gotomeeting->meetinfo);
@@ -34,7 +34,7 @@ require_capability('mod/gotomeeting:view', $context);
 $PAGE->set_url('/mod/gotomeeting/view.php', array('id' => $cm->id));
 $PAGE->set_title($course->shortname . ': ' . $gotomeeting->name);
 $PAGE->set_heading($course->fullname);
-$PAGE->set_activity_record($gotomeeting);
+
 
 $completion = new completion_info($course);
 $completion->set_module_viewed($cm);
@@ -86,22 +86,12 @@ $cell2->style = 'text-align:left;';
 
 $table->data[] = array($cell1, $cell2);
 
-$cell2 = new html_table_cell(html_writer::link(trim($meeturl, '"'), 'Join Meeting', array("target" => "_blank", 'class' => 'btn btn-primary')));
+$cell2 = new html_table_cell(html_writer::link(trim($gotomeeting_joinurl, '"'), 'Join Meeting', array("target" => "_blank", 'class' => 'btn btn-primary')));
 $cell2->colspan = 2;
 $cell2->style = 'text-align:center;';
 
 $table->data[] = array($cell2);
 
-foreach ($gototrainingdownloads as $gototrainingdownload) {
-    $cell1 = new html_table_cell("Meeting Recording");
-    $cell1->colspan = 1;
-    $cell1->style = 'text-align:left;';
-    $downloadlink = html_writer::link($gototrainingdownload->downloadUrl, 'Download Link ');
-    $cell2 = new html_table_cell("<b>$downloadlink</b>");
-    $cell2->colspan = 1;
-    $cell2->style = 'text-align:left;';
-    $table->data[] = array($cell1, $cell2);
-}
 
 
 echo html_writer::table($table);
