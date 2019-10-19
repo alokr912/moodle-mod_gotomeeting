@@ -26,9 +26,14 @@ echo html_writer::div('GoToMeeting config validation ', 'alert alert-info');
 $validconsumerkey = true;
 $validuserid = true;
 $validpassword = true;
+$validconsumersecret = true;
 if (isset($gotomeetingconfig->consumer_key) && $gotomeetingconfig->consumer_key == '') {
     $validconsumerkey = false;
     echo html_writer::div('GoToMeeting consumer key missing', 'alert alert-danger');
+}
+if (isset($gotomeetingconfig->consumer_secret) && $gotomeetingconfig->consumer_secret == '') {
+    $validconsumersecret = false;
+    echo html_writer::div('GoToMeeting consumer secert missing', 'alert alert-danger');
 }
 if (isset($gotomeetingconfig->userid) && $gotomeetingconfig->userid == '') {
     $validuserid = false;
@@ -38,9 +43,9 @@ if (isset($gotomeetingconfig->password) && $gotomeetingconfig->password == '') {
     $validpassword = false;
     echo html_writer::div('GoToMeeting password missing', 'alert alert-danger');
 }
-if ($validconsumerkey && $validuserid && $validpassword) {
+if ($validconsumerkey && $validuserid && $validpassword && $validconsumersecret) {
    
-    OSD::setup(trim($gotomeetingconfig->consumer_key));
+    OSD::setup(trim($gotomeetingconfig->consumer_key),trim($gotomeetingconfig->consumer_secret));
     if (OSD::authenticate_with_password(trim($gotomeetingconfig->userid), trim($gotomeetingconfig->password))) {
         $auth = OSD::$oauth;
         $content = 'Authentication successfull with '
