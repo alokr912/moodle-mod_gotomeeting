@@ -29,16 +29,16 @@ if ($ADMIN->fulltree) {
     $name = 'gotomeeting/userid';
     $visiblename = get_string('gtm_userid', 'gotomeeting');
     $description = get_string('gtm_userid_desc', 'gotomeeting');
-    $settings->add(new admin_setting_configtext($name, $visiblename, $description, '', PARAM_RAW, 50));
+    //$settings->add(new admin_setting_configtext($name, $visiblename, $description, '', PARAM_RAW, 50));
 
     //---------------------Password settings -----------------------------------------------------------------------------------
     $name = 'gotomeeting/password';
     $visiblename = get_string('gtm_password', 'gotomeeting');
     $description = get_string('gtm_password_desc', 'gotomeeting');
-    $settings->add(new admin_setting_configpasswordunmask($name, $visiblename, $description, ''));
+    //$settings->add(new admin_setting_configpasswordunmask($name, $visiblename, $description, ''));
 
 
-    $url = $CFG->wwwroot . '/mod/gotomeeting/configtest.php';
+    $url = $CFG->wwwroot . '/mod/gotomeeting/setup.php';
     $url = htmlentities($url, ENT_COMPAT, 'UTF-8');
     $options = 'toolbar=0,scrollbars=1,location=0,statusbar=0,menubar=0,resizable=0,width=700,height=300';
     $str = '<center><input type="button" onclick="window.open(\'' . $url . '\', \'\', \'' . $options . '\');" value="' .

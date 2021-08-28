@@ -23,6 +23,7 @@ $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST)
 $meeturl = '';
 
 $gotomeeting_joinurl = get_gotomeeting($gotomeeting);
+
 $meeturl = $gotomeeting;
 
 $meetinginfo = json_decode($gotomeeting->meetinfo);
@@ -41,7 +42,7 @@ $completion->set_module_viewed($cm);
 echo $OUTPUT->header();
 echo $OUTPUT->heading('Course:  ' . $course->fullname);
 $table = new html_table();
-$table->head = array('GoToWebinar');
+$table->head = array('GoToMeeting');
 $table->headspan = array(2);
 $table->size = array('30%', '70%');
 

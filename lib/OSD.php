@@ -70,14 +70,14 @@ class OSD {
       $attributes['password']= $password;
       
     $response = self::request(self::POST, '/oauth/v2/token', $attributes, array('oauth_request' => true));
-
+    print_object($response);
             if ($response) {   
               
       $body = $response->json_body();
      
       self::$oauth = new OSDOAuth($body['access_token'], $body['refresh_token'], $body['expires_in'], $body['organizer_key']);
       self::$auth_type = $auth_type;
-     // print_object(self::$oauth);
+      print_object(self::$oauth);
       return true;
     }
     return false;

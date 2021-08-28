@@ -17,13 +17,13 @@ function gotomeeting_add_instance($data, $mform = null) {
     global $USER, $DB;
     $response = createGoToMeeting($data);
 
-    if ($response && $response->status == 201) {
+    if ($response) {
         $data->userid = $USER->id;
         $data->timecreated = time();
         $data->timemodified = time();
-        $data->meetinfo = trim($response->body, '"');
-        $jsonresponse = json_decode($response->body);
-        $data->gotomeetingid = $jsonresponse[0]->meetingid;
+        $data->meetinfo = json_encode($response[0]);
+       
+        $data->gotomeetingid = $response[0]->meetingid;
 
 
         $data->id = $DB->insert_record('gotomeeting', $data);
@@ -115,6 +115,7 @@ function gotomeeting_update_instance($gotomeeting) {
 
         if (!empty($eventid)) {
 
+            
             $event = new stdClass();
             $event->id = $eventid;
             $event->name = $gotomeeting->name;
