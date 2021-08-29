@@ -37,5 +37,14 @@ $string['invalidenddatetime'] = 'End date and time must be a future value';
 $string['enddatetimegtsdt'] = 'End date and time should be more than Start date and time';
 $string['meetingnamerequired'] = 'Title is required';
 $string['pluginadministration'] = 'GoToMeeting administrator';
+$string['startdatetimerequired'] = 'Please enter meeting start date and time';
+$string['enddatetimerequired'] = 'Please enter meeting end date and time';
+$string['future_startdatetime_required'] = 'Start date time must be a future time';
+$string['future_enddatetime_required'] = 'End date time must be future time';
+$string['enddatetimesbgtstartdatetime'] = 'End date time should be more that Start date time.';
+$string[''] = '';
+$string[''] = '';
+$string[''] = '';
+$string[''] = '';
 $string[''] = '';
 

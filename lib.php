@@ -1,5 +1,18 @@
 <?php
-
+// This file is part of the GoToMeeting plugin for Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 /**
  * GoToMeeting module library file
  *
@@ -9,8 +22,8 @@
  */
 defined('MOODLE_INTERNAL') || die;
 
-require_once 'locallib.php';
-require_once $CFG->dirroot . '/calendar/lib.php';
+require_once('locallib.php');
+require_once($CFG->dirroot . '/calendar/lib.php');
 
 function gotomeeting_add_instance($data, $mform = null) {
 
@@ -22,13 +35,11 @@ function gotomeeting_add_instance($data, $mform = null) {
         $data->timecreated = time();
         $data->timemodified = time();
         $data->meetinfo = json_encode($response[0]);
-       
         $data->gotomeetingid = $response[0]->meetingid;
-
 
         $data->id = $DB->insert_record('gotomeeting', $data);
         if ($data->id) {
-            // Add event to calendar
+            // Add event to calendar.
             $event = new stdClass();
             $event->name = $data->name;
             $event->description = $data->intro;
@@ -43,7 +54,6 @@ function gotomeeting_add_instance($data, $mform = null) {
             $event->modulename = 'gotomeeting';
             calendar_event::create($event);
         }
-
 
         $event = \mod_gotomeeting\event\gotomeeting_created::create(array(
                     'objectid' => $data->id,
@@ -115,7 +125,7 @@ function gotomeeting_update_instance($gotomeeting) {
 
         if (!empty($eventid)) {
 
-            
+
             $event = new stdClass();
             $event->id = $eventid;
             $event->name = $gotomeeting->name;
@@ -167,7 +177,7 @@ function gotomeeting_delete_instance($id) {
         $params = array('id' => $gotomeeting->id);
         $result = $DB->delete_records('gotomeeting', $params);
     }
-      
+
     // Delete calendar  event
     $param = array('courseid' => $gotomeeting->course, 'instance' => $gotomeeting->id,
         'groupid' => 0, 'modulename' => 'gotomeeting');
@@ -177,17 +187,14 @@ function gotomeeting_delete_instance($id) {
         $calendarevent = calendar_event::load($eventid);
         $calendarevent->delete();
     }
-      
+
     $event = \mod_gotomeeting\event\gotomeeting_deleted::create(array(
                 'objectid' => $id,
                 'context' => $context,
                 'other' => array('modulename' => $gotomeeting->name, 'startdatetime' => $gotomeeting->startdatetime),
     ));
 
-
     $event->trigger();
-
-     
 
     return $result;
 }

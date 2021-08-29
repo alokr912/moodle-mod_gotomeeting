@@ -1,4 +1,19 @@
 <?php
+// This file is part of the GoToMeeting plugin for Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 
 /**
  * GoToMeeting module view
@@ -11,7 +26,7 @@ require_once($CFG->dirroot . '/mod/gotomeeting/locallib.php');
 require_once($CFG->dirroot . '/mod/gotomeeting/lib/OSD.php');
 require_once($CFG->libdir . '/completionlib.php');
 global $DB, $USER;
-$id = required_param('id', PARAM_INT); // Course Module ID
+$id = required_param('id', PARAM_INT); // Course Module ID.
 
 if ($id) {
     if (!$cm = get_coursemodule_from_id('gotomeeting', $id)) {
@@ -22,7 +37,7 @@ if ($id) {
 $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
 $meeturl = '';
 
-$gotomeeting_joinurl = get_gotomeeting($gotomeeting);
+$joinurl = get_gotomeeting($gotomeeting);
 
 $meeturl = $gotomeeting;
 
@@ -86,8 +101,8 @@ $cell2->colspan = 1;
 $cell2->style = 'text-align:left;';
 
 $table->data[] = array($cell1, $cell2);
-
-$cell2 = new html_table_cell(html_writer::link(trim($gotomeeting_joinurl, '"'), 'Join Meeting', array("target" => "_blank", 'class' => 'btn btn-primary')));
+$link = html_writer::link(trim($joinurl, '"'), 'Join Meeting', array("target" => "_blank", 'class' => 'btn btn-primary'));
+$cell2 = new html_table_cell($link);
 $cell2->colspan = 2;
 $cell2->style = 'text-align:center;';
 

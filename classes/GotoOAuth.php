@@ -1,9 +1,24 @@
 <?php
-
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+// This file is part of the GoToMeeting plugin for Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+/**
+ * GoToMeeting module manage Authentincation with GoTo
+ *
+ * @package mod_gotomeeting
+ * @copyright 2017 Alok Kumar Rai <alokr.mail@gmail.com,alokkumarrai@outlook.in>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 namespace mod_gotomeeting;
@@ -19,25 +34,25 @@ class GotoOAuth {
     public const ACCESS_TOKEN_TIME = "access_token_time";
     public const EXPIRY_TIME_IN_SECOND = 3500;
 
-    private $access_token;
-    private $refresh_token;
-    private $organizer_key;
-    private $account_key;
-    private $access_token_time;
-    private $consumer_key;
-    private $consumer_secret;
+    private $accesstoken;
+    private $refreshtoken;
+    private $organizerkey;
+    private $accountkey;
+    private $accesstokentime;
+    private $consumerkey;
+    private $consumersecret;
 
-    function __construct() {
+    public function __construct() {
 
         $config = get_config(self::PLUGIN_NAME);
         if (isset($config)) {
-            $this->organizer_key = !empty($config->organizer_key) ? $config->organizer_key : null;
-            $this->refresh_token = !empty($config->refresh_token) ? $config->refresh_token : null;
-            $this->access_token = !empty($config->access_token) ? $config->access_token : null;
+            $this->organizerkey = !empty($config->organizer_key) ? $config->organizer_key : null;
+            $this->refreshtoken = !empty($config->refresh_token) ? $config->refresh_token : null;
+            $this->accesstoken = !empty($config->access_token) ? $config->access_token : null;
         }
     }
 
-    public function getAccessTokenWithCode($code) {
+    public function getaccesstokenwithcode($code) {
         global $CFG;
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, self::BASE_URL . "/oauth/v2/token");
@@ -51,19 +66,19 @@ class GotoOAuth {
         ];
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 
-        // echo $authorization;
-        $redirect_url = $CFG->wwwroot . '/mod/gotomeeting/oauthCallback.php';
-        $data = ['redirect_uri' => $redirect_url, 'grant_type' => 'authorization_code', 'code' => $code];
+     
+        $redirecturl = $CFG->wwwroot . '/mod/gotomeeting/oauthCallback.php';
+        $data = ['redirect_uri' => $redirecturl, 'grant_type' => 'authorization_code', 'code' => $code];
         curl_setopt($ch, CURLOPT_POSTFIELDS, self::encode_attributes($data));
 
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
         curl_setopt($ch, CURLOPT_VERBOSE, true);
-        $server_output = curl_exec($ch);
+        $serveroutput = curl_exec($ch);
 
         curl_close($ch);
 
-        $response = json_decode($server_output);
+        $response = json_decode($serveroutput);
 
         if (isset($response) && isset($response->access_token) && isset($response->refresh_token) && isset($response->organizer_key) && isset($response->account_key)) {
             set_config(self::ACCESS_TOKEN, $response->access_token, self::PLUGIN_NAME);
@@ -77,7 +92,7 @@ class GotoOAuth {
         }
     }
 
-    public function getAccessTokenWithRefreshToken($refreshToken) {
+    public function getaccesstokenwithrefreshtoken($refreshToken) {
 
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, self::BASE_URL . "/oauth/v2/token");
@@ -95,20 +110,20 @@ class GotoOAuth {
 
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
-        $server_output = curl_exec($ch);
+        $serveroutput = curl_exec($ch);
         curl_close($ch);
 
-        $response = json_decode($server_output);
+        $response = json_decode($serveroutput);
 
         if (isset($response) && isset($response->access_token) && isset($response->refresh_token) && isset($response->organizer_key) && isset($response->account_key)) {
             set_config(self::ACCESS_TOKEN, $response->access_token, self::PLUGIN_NAME);
             set_config(self::REFRESH_TOKEN, $response->refresh_token, self::PLUGIN_NAME);
             set_config(self::ACCESS_TOKEN_TIME, time(), self::PLUGIN_NAME);
 
-            $this->access_token = $response->access_token;
-            $this->refresh_token = $response->refresh_token;
+            $this->accesstoken = $response->access_token;
+            $this->refreshtoken = $response->refresh_token;
 
-            $this->access_token_time = time();
+            $this->accesstokentime = time();
 
             return $response->access_token;
         }
@@ -120,7 +135,7 @@ class GotoOAuth {
         if (isset($gotowebinarconfig->access_token_time) && !empty($gotowebinarconfig->access_token_time) && $gotowebinarconfig->access_token_time + self::EXPIRY_TIME_IN_SECOND > time()) {
             return $gotowebinarconfig->access_token;
         } else {
-            return $this->getAccessTokenWithRefreshToken($gotowebinarconfig->refresh_token);
+            return $this->getaccesstokenwithrefreshtoken($gotowebinarconfig->refresh_token);
         }
     }
 
@@ -141,11 +156,11 @@ class GotoOAuth {
 
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
-        $server_output = curl_exec($ch);
+        $serveroutput = curl_exec($ch);
 
         curl_close($ch);
 
-        return json_decode($server_output);
+        return json_decode($serveroutput);
     }
 
     public function put($endpoint, $data) {
@@ -165,11 +180,11 @@ class GotoOAuth {
 
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
-        $server_output = curl_exec($ch);
+        $serveroutput = curl_exec($ch);
 
         curl_close($ch);
 
-        $result = json_decode($server_output);
+        $result = json_decode($serveroutput);
         return true;
     }
 
@@ -184,11 +199,11 @@ class GotoOAuth {
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
-        $server_output = curl_exec($ch);
+        $serveroutput = curl_exec($ch);
 
         curl_close($ch);
 
-        return json_decode($server_output);
+        return json_decode($serveroutput);
     }
 
     public function delete($endpoint, $data) {
@@ -208,11 +223,11 @@ class GotoOAuth {
 
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
-        $server_output = curl_exec($ch);
+        $serveroutput = curl_exec($ch);
 
         curl_close($ch);
 
-        $result = json_decode($server_output);
+        $result = json_decode($serveroutput);
     }
 
     public function getSetupStatus() {
@@ -233,13 +248,13 @@ class GotoOAuth {
 
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
-        $server_output = curl_exec($ch);
+        $serveroutput = curl_exec($ch);
         $chinfo = curl_getinfo($ch);
         curl_close($ch);
 
         if ($chinfo['http_code'] === 200) {
 
-            return json_decode($server_output);
+            return json_decode($serveroutput);
         }
 
         return false;
