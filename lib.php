@@ -80,16 +80,36 @@ function gotomeeting_add_instance($data, $mform = null) {
  */
 function gotomeeting_supports($feature) {
     switch ($feature) {
-        case FEATURE_GROUPS: return false;
-        case FEATURE_GROUPINGS: return false;
-        case FEATURE_GROUPMEMBERSONLY: return false;
-        case FEATURE_MOD_INTRO: return true;
-        case FEATURE_COMPLETION_TRACKS_VIEWS: return true;
-        case FEATURE_GRADE_HAS_GRADE: return false;
-        case FEATURE_GRADE_OUTCOMES: return false;
-        case FEATURE_BACKUP_MOODLE2: return true;
-        case FEATURE_COMPLETION_HAS_RULES: return false;
-        default: return null;
+        case FEATURE_GROUPS: {
+                return false;
+        }
+        case FEATURE_GROUPINGS: {
+                return false;
+        }
+        case FEATURE_GROUPMEMBERSONLY: {
+                return false;
+        }
+        case FEATURE_MOD_INTRO: {
+                return true;
+        }
+        case FEATURE_COMPLETION_TRACKS_VIEWS: {
+                return true;
+        }
+        case FEATURE_GRADE_HAS_GRADE: {
+                return false;
+        }
+        case FEATURE_GRADE_OUTCOMES: {
+                return false;
+        }
+        case FEATURE_BACKUP_MOODLE2: {
+                return true;
+        }
+        case FEATURE_COMPLETION_HAS_RULES: {
+                return false;
+        }
+        default:{
+            return null;
+        }
     }
 }
 
@@ -124,7 +144,6 @@ function gotomeeting_update_instance($gotomeeting) {
         $eventid = $DB->get_field('event', 'id', $param);
 
         if (!empty($eventid)) {
-
 
             $event = new stdClass();
             $event->id = $eventid;
@@ -178,7 +197,7 @@ function gotomeeting_delete_instance($id) {
         $result = $DB->delete_records('gotomeeting', $params);
     }
 
-    // Delete calendar  event
+    // Delete calendar  event.
     $param = array('courseid' => $gotomeeting->course, 'instance' => $gotomeeting->id,
         'groupid' => 0, 'modulename' => 'gotomeeting');
 
@@ -199,11 +218,7 @@ function gotomeeting_delete_instance($id) {
     return $result;
 }
 
-/*
- * 
- * 
- * 
- */
+
 
 function gotomeeting_get_completion_state($course, $cm, $userid, $type) {
     global $CFG, $DB;

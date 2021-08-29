@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of the GoToMeeting plugin for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -21,12 +20,13 @@
  * @copyright 2017 Alok Kumar Rai <alokr.mail@gmail.com,alokkumarrai@outlook.in>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-require_once ($CFG->dirroot . '/mod/gotomeeting/classes/GoToOAuth.php');
+defined('MOODLE_INTERNAL') || die;
+require_once($CFG->dirroot . '/mod/gotomeeting/classes/GoToOAuth.php');
 
-function createGoToMeeting($gotomeeting) {
+function creategotomeeting($gotomeeting) {
     global $USER, $DB, $CFG;
 
-    $goToOauth = new mod_gotomeeting\GoToOAuth();
+    $gotooauth = new mod_gotomeeting\GoToOAuth();
     $config = get_config(mod_gotomeeting\GoToOAuth::PLUGIN_NAME);
     if (!isset($config->organizer_key) || empty($config->organizer_key)) {
         print_error("Incomplete GoToMeeting setup");
@@ -35,16 +35,18 @@ function createGoToMeeting($gotomeeting) {
     $attributes = array();
     $dstoffset = dst_offset_on($gotomeeting->startdatetime, get_user_timezone());
     $attributes['subject'] = $gotomeeting->name;
-    $startdate = usergetdate(usertime($gotomeeting->startdatetime - $dstoffset));
-    $attributes['starttime'] = $startdate['year'] . '-' . $startdate['mon'] . '-' . $startdate['mday'] . 'T' . $startdate['hours'] . ':' . $startdate['minutes'] . ':' . $startdate['seconds'] . 'Z';
-    $endtdate = usergetdate(usertime($gotomeeting->enddatetime - $dstoffset));
-    $attributes['endtime'] = $endtdate['year'] . '-' . $endtdate['mon'] . '-' . $endtdate['mday'] . 'T' . $endtdate['hours'] . ':' . $endtdate['minutes'] . ':' . $endtdate['seconds'] . 'Z';
+    $sdate = usergetdate(usertime($gotomeeting->startdatetime - $dstoffset));
+    $attributes['starttime'] = $sdate['year'] . '-' . $sdate['mon'] . '-' . $sdate['mday'] . 'T' .
+            $sdate['hours'] . ':' . $sdate['minutes'] . ':' . $sdate['seconds'] . 'Z';
+    $edate = usergetdate(usertime($gotomeeting->enddatetime - $dstoffset));
+    $attributes['endtime'] = $edate['year'] . '-' . $edate['mon'] . '-' . $edate['mday'] . 'T' .
+            $edate['hours'] . ':' . $edate['minutes'] . ':' . $edate['seconds'] . 'Z';
     $attributes['passwordrequired'] = 'false';
     $attributes['conferencecallinfo'] = 'Hybrid';
     $attributes['meetingtype'] = 'scheduled';
     $attributes['timezonekey'] = get_user_timezone();
 
-    $response = $goToOauth->post("/G2M/rest/meetings", $attributes);
+    $response = $gotooauth->post("/G2M/rest/meetings", $attributes);
 
     if ($response) {
         return $response;
@@ -52,31 +54,31 @@ function createGoToMeeting($gotomeeting) {
     return false;
 }
 
-function updateGoToMeeting($oldgotomeeting, $gotomeeting) {
+function updategotomeeting($oldgotomeeting, $gotomeeting) {
     global $USER, $DB, $CFG;
 
     $result = false;
-    $goToOauth = new mod_gotomeeting\GoToOAuth();
+    $gotooauth = new mod_gotomeeting\GoToOAuth();
     $config = get_config(mod_gotomeeting\GoToOAuth::PLUGIN_NAME);
     if (!isset($config->organizer_key) || empty($config->organizer_key)) {
         print_error("Incomplete GoToMeeting setup");
     }
 
-
-
     $attributes = array();
     $attributes['subject'] = $gotomeeting->name;
     $dstoffset = dst_offset_on($gotomeeting->startdatetime, get_user_timezone());
-    $startdate = usergetdate(usertime($gotomeeting->startdatetime - $dstoffset));
-    $attributes['starttime'] = $startdate['year'] . '-' . $startdate['mon'] . '-' . $startdate['mday'] . 'T' . $startdate['hours'] . ':' . $startdate['minutes'] . ':' . $startdate['seconds'] . 'Z';
-    $endtdate = usergetdate(usertime($gotomeeting->enddatetime - $dstoffset));
-    $attributes['endtime'] = $endtdate['year'] . '-' . $endtdate['mon'] . '-' . $endtdate['mday'] . 'T' . $endtdate['hours'] . ':' . $endtdate['minutes'] . ':' . $endtdate['seconds'] . 'Z';
+    $sdate = usergetdate(usertime($gotomeeting->startdatetime - $dstoffset));
+    $attributes['starttime'] = $sdate['year'] . '-' . $sdate['mon'] . '-' . $sdate['mday'] . 'T' .
+            $sdate['hours'] . ':' . $sdate['minutes'] . ':' . $sdate['seconds'] . 'Z';
+    $edate = usergetdate(usertime($gotomeeting->enddatetime - $dstoffset));
+    $attributes['endtime'] = $edate['year'] . '-' . $edate['mon'] . '-' . $edate['mday'] . 'T' .
+            $edate['hours'] . ':' . $edate['minutes'] . ':' . $edate['seconds'] . 'Z';
     $attributes['passwordrequired'] = 'false';
     $attributes['conferencecallinfo'] = 'Hybrid';
     $attributes['meetingtype'] = 'scheduled';
     $attributes['timezonekey'] = get_user_timezone();
 
-    $response = $goToOauth->put("/G2M/rest/meetings/{$oldgotomeeting->gotomeetingid}", $attributes);
+    $response = $gotooauth->put("/G2M/rest/meetings/{$oldgotomeeting->gotomeetingid}", $attributes);
 
     if ($response) {
         $result = true;
@@ -85,16 +87,16 @@ function updateGoToMeeting($oldgotomeeting, $gotomeeting) {
     return $result;
 }
 
-function deleteGoToMeeting($gotowebinarid) {
+function deletegotomeeting($gotowebinarid) {
 
-    $goToOauth = new mod_gotomeeting\GoToOAuth();
+    $gotooauth = new mod_gotomeeting\GoToOAuth();
     $config = get_config(mod_gotomeeting\GoToOAuth::PLUGIN_NAME);
 
     if (!isset($config->organizer_key) || empty($config->organizer_key)) {
         print_error("Incomplete GoToMeeting setup");
     }
 
-    $responce = $goToOauth->delete("/G2M/rest/meetings/{$gotowebinarid}");
+    $responce = $gotooauth->delete("/G2M/rest/meetings/{$gotowebinarid}");
     if ($responce) {
         return true;
     } else {
@@ -104,17 +106,17 @@ function deleteGoToMeeting($gotowebinarid) {
 
 function get_gotomeeting($gotomeeting) {
 
-
-    $goToOauth = new mod_gotomeeting\GoToOAuth();
+    $gotooauth = new mod_gotomeeting\GoToOAuth();
     $config = get_config(mod_gotomeeting\GoToOAuth::PLUGIN_NAME);
 
     if (!isset($config->organizer_key) || empty($config->organizer_key)) {
         print_error("Incomplete GoToMeeting setup");
     }
     $context = context_course::instance($gotomeeting->course);
-    if (is_siteadmin() OR has_capability('mod/gotomeeting:organiser', $context) OR has_capability('mod/gotomeeting:presenter', $context)) {
+    if (is_siteadmin() OR has_capability('mod/gotomeeting:organiser', $context) OR
+            has_capability('mod/gotomeeting:presenter', $context)) {
 
-        $response = $goToOauth->get("/G2M/rest/meetings/{$gotomeeting->gotomeetingid}/start");
+        $response = $gotooauth->get("/G2M/rest/meetings/{$gotomeeting->gotomeetingid}/start");
 
         if ($response) {
             return $response->hostURL;

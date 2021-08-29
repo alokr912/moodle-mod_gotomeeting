@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of the GoToMeeting plugin for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -34,12 +33,11 @@ class mod_gotomeeting_mod_form extends moodleform_mod {
         $mform = $this->_form;
         $gotomeetingconfig = get_config('gotomeeting');
         $mform->addElement('header', 'general', get_string('generalsetting', 'gotomeeting'));
-        // Adding a text element
+
         $mform->addElement('text', 'name', get_string('meetingname', 'gotomeeting'));
         $mform->setType('name', PARAM_TEXT);
         $mform->addRule('name', get_string('meetingnamerequired', 'gotomeeting'), 'required', '', 'server');
-        // $this->standard_intro_elements(get_string('gotomeetingintro', 'gotomeeting'));
-        // Adding a new text editor.
+
         $this->add_intro_editor(true, get_string('gotomeetingintro', 'gotomeeting'));
 
         $mform->addElement('header', 'meetingheader', get_string('meetingheader', 'gotomeeting'));
@@ -59,40 +57,24 @@ class mod_gotomeeting_mod_form extends moodleform_mod {
 
         $this->standard_coursemodule_elements();
 
-
         $this->add_action_buttons(true, false, null);
     }
 
-    function data_preprocessing(&$default_values) {
-        parent::data_preprocessing($default_values);
-
-        // Set up the completion checkboxes which aren't part of standard data.
-        // We also make the default value (if you turn on the checkbox) for those
-        // numbers to be 1, this will not apply unless checkbox is ticked.
+    public function data_preprocessing(&$defaultvalues) {
+        parent::data_preprocessing($defaultvalues);
     }
 
-    function add_completion_rules() {
+    public function add_completion_rules() {
         $mform = & $this->_form;
 
-        /* $group = array();
-          $group[] = & $mform->createElement('checkbox', 'completionparticipationenabled', '', get_string('completiongotomeeting', 'mod_gotomeeting'));
-          $group[] = & $mform->createElement('text', 'completionparticipation', '', array('size' => 3, 'value' => 50));
-          $mform->setType('completionparticipation', PARAM_INT);
-          $mform->addGroup($group, 'completiongotomeetinggroup', get_string('completiongotomeetinggroup', 'mod_gotomeeting'), array(' '), false);
-          $mform->addHelpButton('completiongotomeetinggroup', 'completiongotomeetinggroup', 'gotomeeting');
-          $mform->disabledIf('completionparticipationenabled', 'meetingtype', 'eq', 'gotomeeting');
-          $mform->disabledIf('completionparticipation', 'meetingtype', 'eq', 'gotomeeting');
-          $mform->disabledIf('completionparticipation', 'completionparticipationenabled', 'notchecked');
-
-          return array('completiongotomeetinggroup'); */
         return array();
     }
 
-    function completion_rule_enabled($data) {
+    public function completion_rule_enabled($data) {
         return (!empty($data['completionparticipationenabled']) && $data['completionparticipation'] != 0);
     }
 
-    function validation($data, $files) {
+    public function validation($data, $files) {
 
         $errors = parent::validation($data, $files);
 
@@ -120,10 +102,9 @@ class mod_gotomeeting_mod_form extends moodleform_mod {
                 $errors['enddatetime'] = "Start date must be in the range of the course week";
             }
         }
-        //
 
         if (!empty($data['completionunlocked']) && (!empty($data['completionparticipationenabled']))) {
-            // Turn off completion settings if the checkboxes aren't ticked
+            // Turn off completion settings if the checkboxes aren't ticked.
             $autocompletion = !empty($data['completion']) && $data['completion'] == COMPLETION_TRACKING_AUTOMATIC;
             if ($autocompletion && ($data['completionparticipation'] > 100 || $data['completionparticipation'] <= 0)) {
                 $errors['completiongotomeetinggroup'] = 'Please enter a valid percentage value between 1 and 100';
@@ -132,13 +113,13 @@ class mod_gotomeeting_mod_form extends moodleform_mod {
         return $errors;
     }
 
-    function get_data() {
+    public function get_data() {
         $data = parent::get_data();
         if (!$data) {
             return $data;
         }
         if (!empty($data->completionunlocked)) {
-            // Turn off completion settings if the checkboxes aren't ticked
+            // Turn off completion settings if the checkboxes aren't ticked.
             $autocompletion = !empty($data->completion) && $data->completion == COMPLETION_TRACKING_AUTOMATIC;
             if (empty($data->completionparticipationenabled) || !$autocompletion) {
                 $data->completionparticipation = 0;

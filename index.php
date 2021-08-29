@@ -24,7 +24,7 @@
 require_once("../../config.php");
 require_once("lib.php");
 
-$id = required_param('id', PARAM_INT);   // course.
+$id = required_param('id', PARAM_INT);
 require_login();
 $PAGE->set_url('/mod/gotomeeting/index.php', array('id' => $id));
 

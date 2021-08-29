@@ -66,7 +66,6 @@ class GotoOAuth {
         ];
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 
-     
         $redirecturl = $CFG->wwwroot . '/mod/gotomeeting/oauthCallback.php';
         $data = ['redirect_uri' => $redirecturl, 'grant_type' => 'authorization_code', 'code' => $code];
         curl_setopt($ch, CURLOPT_POSTFIELDS, self::encode_attributes($data));
@@ -80,7 +79,8 @@ class GotoOAuth {
 
         $response = json_decode($serveroutput);
 
-        if (isset($response) && isset($response->access_token) && isset($response->refresh_token) && isset($response->organizer_key) && isset($response->account_key)) {
+        if (isset($response) && isset($response->access_token) && isset($response->refresh_token) &&
+                isset($response->organizer_key) && isset($response->account_key)) {
             set_config(self::ACCESS_TOKEN, $response->access_token, self::PLUGIN_NAME);
             set_config(self::REFRESH_TOKEN, $response->refresh_token, self::PLUGIN_NAME);
             set_config(self::ORGANISER_KEY, $response->organizer_key, self::PLUGIN_NAME);
@@ -92,7 +92,7 @@ class GotoOAuth {
         }
     }
 
-    public function getaccesstokenwithrefreshtoken($refreshToken) {
+    public function getaccesstokenwithrefreshtoken($refreshtoken) {
 
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, self::BASE_URL . "/oauth/v2/token");
@@ -105,7 +105,7 @@ class GotoOAuth {
         ];
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 
-        $data = ['grant_type' => 'refresh_token', 'refresh_token' => $refreshToken];
+        $data = ['grant_type' => 'refresh_token', 'refresh_token' => $refreshtoken];
         curl_setopt($ch, CURLOPT_POSTFIELDS, self::encode_attributes($data));
 
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -115,7 +115,8 @@ class GotoOAuth {
 
         $response = json_decode($serveroutput);
 
-        if (isset($response) && isset($response->access_token) && isset($response->refresh_token) && isset($response->organizer_key) && isset($response->account_key)) {
+        if (isset($response) && isset($response->access_token) && isset($response->refresh_token) &&
+                isset($response->organizer_key) && isset($response->account_key)) {
             set_config(self::ACCESS_TOKEN, $response->access_token, self::PLUGIN_NAME);
             set_config(self::REFRESH_TOKEN, $response->refresh_token, self::PLUGIN_NAME);
             set_config(self::ACCESS_TOKEN_TIME, time(), self::PLUGIN_NAME);
@@ -130,9 +131,10 @@ class GotoOAuth {
         return false;
     }
 
-    function getAccessToken() {
+    public function getaccesstoken() {
         $gotowebinarconfig = get_config(self::PLUGIN_NAME);
-        if (isset($gotowebinarconfig->access_token_time) && !empty($gotowebinarconfig->access_token_time) && $gotowebinarconfig->access_token_time + self::EXPIRY_TIME_IN_SECOND > time()) {
+        if (isset($gotowebinarconfig->access_token_time) && !empty($gotowebinarconfig->access_token_time) &&
+                $gotowebinarconfig->access_token_time + self::EXPIRY_TIME_IN_SECOND > time()) {
             return $gotowebinarconfig->access_token;
         } else {
             return $this->getaccesstokenwithrefreshtoken($gotowebinarconfig->refresh_token);
@@ -149,8 +151,6 @@ class GotoOAuth {
             'Authorization: Bearer ' . $this->getAccessToken()
         ];
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-
-        // echo $authorization;
 
         curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
 
@@ -173,8 +173,6 @@ class GotoOAuth {
             'Authorization: Bearer ' . $this->getAccessToken()
         ];
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-
-        // echo $authorization;
 
         curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
 
@@ -212,10 +210,10 @@ class GotoOAuth {
         curl_setopt($ch, CURLOPT_URL, self::BASE_URL . $endpoint);
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "DELETE");
         $gotowebinarconfig = get_config(self::PLUGIN_NAME);
-        $access_token = $gotowebinarconfig->access_token;
+        $accesstoken = $gotowebinarconfig->access_token;
 
         $headers = [
-            'Authorization: Bearer ' . $access_token
+            'Authorization: Bearer ' . $accesstoken
         ];
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 
@@ -230,7 +228,7 @@ class GotoOAuth {
         $result = json_decode($serveroutput);
     }
 
-    public function getSetupStatus() {
+    public function getsetupstatus() {
 
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, self::BASE_URL . "/oauth/v2/token");

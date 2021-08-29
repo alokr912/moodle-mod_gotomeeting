@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of the GoToMeeting plugin for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -28,15 +27,9 @@ class restore_gotomeeting_activity_structure_step extends restore_activity_struc
 
         $paths = array();
         $userinfo = false;
-//        $userinfo = $this->get_setting_value('userinfo');
 
         $paths[] = new restore_path_element('gotomeeting', '/activity/gotomeeting');
-        // $paths[] = new restore_path_element('gotomeeting_meeting_group', '/activity/gotomeeting/meeting_groups/meeting_group');
-//        if ($userinfo) {
-//            $paths[] = new restore_path_element('survey_answer', '/activity/survey/answers/answer');
-//            $paths[] = new restore_path_element('survey_analys', '/activity/survey/analysis/analys');
-//        }
-        // Return the paths wrapped into standard activity structure
+
         return $this->prepare_activity_structure($paths);
     }
 
@@ -49,9 +42,9 @@ class restore_gotomeeting_activity_structure_step extends restore_activity_struc
         $data->timemodified = $this->apply_date_offset($data->timemodified);
         $data->timecreated = $this->apply_date_offset($data->timecreated);
 
-        // insert the gotomeeting record
+        // Insert the gotomeeting record.
         $newitemid = $DB->insert_record('gotomeeting', $data);
-        // immediately after inserting "activity" record, call this
+        // Immediately after inserting "activity" record, call this.
         $this->apply_activity_instance($newitemid);
     }
 
@@ -63,14 +56,10 @@ class restore_gotomeeting_activity_structure_step extends restore_activity_struc
         $data->groupid = $this->get_mappingid('instanceid', $data->instanceid);
 
         $newitemid = $DB->insert_record('gotomeeting_registrant', $data);
-
-        // No need to save this mapping as far as nothing depend on it
-        // (child paths, file areas nor links decoder)
     }
 
     protected function after_execute() {
-        // Add survey related files, no need to match by itemname (just internally handled context)
-        // $this->add_related_files('mod_gotomeeting', 'intro', null);
+        // Add survey related files, no need to match by itemname (just internally handled context).
     }
 
 }

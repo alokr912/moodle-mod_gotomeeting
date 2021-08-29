@@ -39,11 +39,11 @@ class backup_gotomeeting_activity_task extends backup_activity_task {
 
         $base = preg_quote($CFG->wwwroot, "/");
 
-        // Link to the list of adobeconnect instances
+        // Link to the list of adobeconnect instances.
         $search = "/(" . $base . "\/mod\/gotomeeting\/index.php\?id\=)([0-9]+)/";
         $content = preg_replace($search, '$@GOTOLMS*$2@$', $content);
 
-        // Link to adobeconnect view by moduleid
+        // Link to adobeconnect view by moduleid.
         $search = "/(" . $base . "\/mod\/GOTOLMS\/view.php\?id\=)([0-9]+)/";
         $content = preg_replace($search, '$@GOTOLMS*$2@$', $content);
 
