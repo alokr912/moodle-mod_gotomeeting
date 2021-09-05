@@ -23,7 +23,6 @@
  */
 require('../../config.php');
 require_once($CFG->dirroot . '/mod/gotomeeting/locallib.php');
-require_once($CFG->dirroot . '/mod/gotomeeting/lib/OSD.php');
 require_once($CFG->libdir . '/completionlib.php');
 global $DB, $USER;
 $id = required_param('id', PARAM_INT); // Course Module ID.

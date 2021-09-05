@@ -241,7 +241,7 @@ class GotoOAuth {
         ];
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 
-        $data = ['grant_type' => 'refresh_token', 'refresh_token' => $this->refresh_token];
+        $data = ['grant_type' => 'refresh_token', 'refresh_token' => $this->refreshtoken];
         curl_setopt($ch, CURLOPT_POSTFIELDS, self::encode_attributes($data));
 
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);

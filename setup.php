@@ -21,11 +21,11 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 require_once('../../config.php');
-require_once('./classes/gotooauth.class.php');
+require_once('./classes/GotoOAuth.php');
 
 require_login();
 $PAGE->set_context(context_system::instance());
-$PAGE->set_url(new moodle_url($CFG->wwwroot . '/mod/gotomeeting/configtest.php'));
+$PAGE->set_url(new moodle_url($CFG->wwwroot . '/mod/gotomeeting/setup.php'));
 $PAGE->set_pagelayout('admin');
 $PAGE->set_heading('GoToMeeting config test report');
 $PAGE->set_title('GoToMeeting config test report');
@@ -34,7 +34,7 @@ if (!is_siteadmin()) {
     print_error('nopermissions', 'gotomeeting', '', null);
 }
 
-$gotomeetingconfig = get_config(GoToOAuth::PLUGIN_NAME);
+$gotomeetingconfig = get_config(mod_gotomeeting\GoToOAuth::PLUGIN_NAME);
 
 $gotoauth = new mod_gotomeeting\GoToOAuth();
 $status = $gotoauth->getSetupStatus();
@@ -51,7 +51,7 @@ if ($status) {
 } else if (!empty($gotomeetingconfig->consumer_key) && !empty($gotomeetingconfig->consumer_secret)) {
       $consumerkey = trim($gotomeetingconfig->consumer_key);
     $redirecturl = $CFG->wwwroot . '/mod/gotomeeting/oauthCallback.php';
-    $url = GoToOAuth::BASE_URL . "/oauth/v2/authorize?client_id=$consumerkey&response_type=code&redirect_uri=$redirecturl";
+    $url = mod_gotomeeting\GoToOAuth::BASE_URL . "/oauth/v2/authorize?client_id=$consumerkey&response_type=code&redirect_uri=$redirecturl";
 
     redirect($url);
 } else {

@@ -128,7 +128,7 @@ function gotomeeting_update_instance($gotomeeting) {
         return false;
     }
     $result = false;
-    $result = updateGoToMeeting($oldgotomeeting, $gotomeeting);
+    $result = updategotomeeting($oldgotomeeting, $gotomeeting);
 
     if ($result) {
 
@@ -192,7 +192,7 @@ function gotomeeting_delete_instance($id) {
     }
     $context = context_module::instance($cm->id);
 
-    if (deleteGoToMeeting($gotomeeting->gotomeetingid)) {
+    if (deletegotomeeting($gotomeeting->gotomeetingid)) {
         $params = array('id' => $gotomeeting->id);
         $result = $DB->delete_records('gotomeeting', $params);
     }
