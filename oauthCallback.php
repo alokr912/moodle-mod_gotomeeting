@@ -13,34 +13,30 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
- * GoToWebinar module view file
+ * GoToMeeting module OAuthCallbak  file
  *
  * @package mod_gotomeeting
  * @copyright 2017 Alok Kumar Rai <alokr.mail@gmail.com,alokkumarrai@outlook.in>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class backup_gotomeeting_activity_structure_step extends backup_activity_structure_step {
+require_once('../../config.php');
 
-    protected function define_structure() {
-        $gotomeeting = new backup_nested_element('gotomeeting', array('id'),
-                array('course',
-            'name',
-            'intro',
-            'introformat',
-            'meetingtype',
-            'userid',
-            'meetinginfo',
-            'gotomeetingid',
-            'startdatetime',
-            'enddatetime',
-            'completionparticipation',
-            'meetingpublic',
-            'timecreated',
-            'timemodified'));
+require_once('./classes/GotoOAuth.php');
+$code = required_param('code', PARAM_RAW);
 
-        $gotomeeting->set_source_table('gotomeeting', array('id' => backup::VAR_ACTIVITYID));
-        return $this->prepare_activity_structure($gotomeeting);
-    }
+require_login();
+$gotomeeting = new mod_gotomeeting\GoToOAuth();
+$result = $gotomeeting->getaccesstokenwithcode($code);
 
+$PAGE->set_context(context_system::instance());
+$PAGE->set_url(new moodle_url($CFG->wwwroot . '/mod/gotomeeting/oauthCallback.php'));
+echo $OUTPUT->header();
+if ($result) {
+    echo html_writer::div('GoToMeeting consumer is complete', 'alert alert-success');
+} else {
+    echo html_writer::div('GoToMeeting consumer key missing', 'alert alert-danger');
 }
+echo $OUTPUT->footer();
+
