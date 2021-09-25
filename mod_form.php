@@ -38,7 +38,7 @@ class mod_gotomeeting_mod_form extends moodleform_mod {
         $mform->setType('name', PARAM_TEXT);
         $mform->addRule('name', get_string('meetingnamerequired', 'gotomeeting'), 'required', '', 'server');
 
-        $this->add_intro_editor(true, get_string('gotomeetingintro', 'gotomeeting'));
+        $this->standard_intro_elements();
 
         $mform->addElement('header', 'meetingheader', get_string('meetingheader', 'gotomeeting'));
 
