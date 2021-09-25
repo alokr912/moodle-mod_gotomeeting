@@ -36,8 +36,9 @@ if (!is_siteadmin()) {
 
 $gotomeetingconfig = get_config(mod_gotomeeting\GoToOAuth::PLUGIN_NAME);
 
-$gotoauth = new mod_gotomeeting\GoToOAuth();
+$gotoauth = new mod_gotomeeting\GoToOAuth(null);
 $status = $gotoauth->getSetupStatus();
+
 if ($status) {
     echo $OUTPUT->header();
     echo html_writer::div('GoToWebinar setup status ', 'alert alert-info');

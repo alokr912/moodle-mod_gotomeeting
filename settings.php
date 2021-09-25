@@ -24,7 +24,7 @@ defined('MOODLE_INTERNAL') || die;
 
 if ($ADMIN->fulltree) {
 
-
+    global $DB;
 
     $name = 'gotomeeting/consumer_key';
     $visiblename = get_string('gtm_consumer_key', 'gotomeeting');
@@ -36,12 +36,17 @@ if ($ADMIN->fulltree) {
     $description = get_string('gtm_consumer_secret_desc', 'gotomeeting');
     $settings->add(new admin_setting_configtext($name, $visiblename, $description, '', PARAM_RAW, 50));
 
-
+    $licences  = $DB->get_records('gotomeeting_licence' );
+    foreach($licences as $licence){
+        $settings->add(new admin_setting_description($licence->id,$licence->email,'Active'));
+        
+    }
     $url = $CFG->wwwroot . '/mod/gotomeeting/setup.php';
+    
     $url = htmlentities($url, ENT_COMPAT, 'UTF-8');
     $options = 'toolbar=0,scrollbars=1,location=0,statusbar=0,menubar=0,resizable=0,width=700,height=300';
     $str = '<center><input type="button" onclick="window.open(\'' . $url . '\', \'\', \'' . $options . '\');" value="' .
-            get_string('testconnection', 'gotomeeting') . '" /></center>';
+            get_string('addlicence', 'gotomeeting') . '" /></center>';
     $settings->add(new admin_setting_heading('adobeconnect_test', '', $str));
 }
 

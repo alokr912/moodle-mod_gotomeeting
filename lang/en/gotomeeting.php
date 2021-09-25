@@ -55,9 +55,9 @@ $string['enddatetimerequired'] = 'Please enter meeting end date and time';
 $string['future_startdatetime_required'] = 'Start date time must be a future time';
 $string['future_enddatetime_required'] = 'End date time must be future time';
 $string['enddatetimesbgtstartdatetime'] = 'End date time should be more that Start date time.';
-$string[''] = '';
-$string[''] = '';
-$string[''] = '';
-$string[''] = '';
+$string['addlicence'] = 'Add new licence';
+$string['licence'] = 'Licence';
+$string['licencerequired']= 'GoToMeeting Licence required.';
+$string['meetingid'] = 'Meeting ID';
 $string[''] = '';
 

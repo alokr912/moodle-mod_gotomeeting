@@ -22,6 +22,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 require('../../config.php');
+require_once('lib.php');
 require_once($CFG->dirroot . '/mod/gotomeeting/locallib.php');
 require_once($CFG->libdir . '/completionlib.php');
 global $DB, $USER;
@@ -35,6 +36,7 @@ if ($id) {
 }
 $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
 $meeturl = '';
+$meetinfo = json_decode($gotomeeting->meetinfo);
 
 $joinurl = get_gotomeeting($gotomeeting);
 
@@ -59,6 +61,26 @@ $table = new html_table();
 $table->head = array('GoToMeeting');
 $table->headspan = array(2);
 $table->size = array('30%', '70%');
+
+$cell1 = new html_table_cell("Attendance report");
+$cell1->colspan = 1;
+$cell1->style = 'text-align:left;';
+
+$cell2 = new html_table_cell("<b>" . html_writer::link('/mod/gotomeeting/attendance', 'Attendance report'). "</b>");
+$cell2->colspan = 1;
+$cell2->style = 'text-align:left;';
+
+$table->data[] = array($cell1, $cell2);
+
+$cell1 = new html_table_cell("Account name");
+$cell1->colspan = 1;
+$cell1->style = 'text-align:left;';
+
+$cell2 = new html_table_cell("<b>" . gotomeeting_get_organiser_account_name($gotomeeting->gotomeeting_licence) . "</b>");
+$cell2->colspan = 1;
+$cell2->style = 'text-align:left;';
+
+$table->data[] = array($cell1, $cell2);
 
 $cell1 = new html_table_cell("Meeting Title");
 $cell1->colspan = 1;
@@ -100,6 +122,27 @@ $cell2->colspan = 1;
 $cell2->style = 'text-align:left;';
 
 $table->data[] = array($cell1, $cell2);
+
+$cell1 = new html_table_cell(get_string('meetingid', 'gotomeeting'));
+$cell1->colspan = 1;
+$cell1->style = 'text-align:left;';
+
+$cell2 = new html_table_cell("<b>" . $meetinfo->meetingid . "</b>");
+$cell2->colspan = 1;
+$cell2->style = 'text-align:left;';
+
+$table->data[] = array($cell1, $cell2);
+
+$cell1 = new html_table_cell("Meeting end date and time");
+$cell1->colspan = 1;
+$cell1->style = 'text-align:left;';
+
+$cell2 = new html_table_cell("<b>" . $meetinfo->conferenceCallInfo . "</b>");
+$cell2->colspan = 1;
+$cell2->style = 'text-align:left;';
+
+$table->data[] = array($cell1, $cell2);
+
 $link = html_writer::link(trim($joinurl, '"'), 'Join Meeting', array("target" => "_blank", 'class' => 'btn btn-primary'));
 $cell2 = new html_table_cell($link);
 $cell2->colspan = 2;

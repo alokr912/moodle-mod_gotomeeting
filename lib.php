@@ -25,18 +25,30 @@ defined('MOODLE_INTERNAL') || die;
 require_once('locallib.php');
 require_once($CFG->dirroot . '/calendar/lib.php');
 
+function gotomeeting_get_coursemodule_info($coursemodule) {
+    global $DB;
+
+    if ($gotomeeting = $DB->get_record('gotomeeting', array('id' => $coursemodule->instance), 'id, name, startdatetime')) {
+        $info = new cached_cm_info();
+        $info->name = $gotomeeting->name . "  " . userdate($gotomeeting->startdatetime, '%d/%m/%Y %H:%M');
+        return $info;
+    } else {
+        return null;
+    }
+}
 function gotomeeting_add_instance($data, $mform = null) {
 
     global $USER, $DB;
     $response = createGoToMeeting($data);
-
+    
     if ($response) {
         $data->userid = $USER->id;
         $data->timecreated = time();
         $data->timemodified = time();
         $data->meetinfo = json_encode($response[0]);
         $data->gotomeetingid = $response[0]->meetingid;
-
+        $data->gotomeeting_licence = $data->licence;
+       
         $data->id = $DB->insert_record('gotomeeting', $data);
         if ($data->id) {
             // Add event to calendar.
@@ -192,7 +204,7 @@ function gotomeeting_delete_instance($id) {
     }
     $context = context_module::instance($cm->id);
 
-    if (deletegotomeeting($gotomeeting->gotomeetingid)) {
+    if (deletegotomeeting($gotomeeting->gotomeetingid,$gotomeeting->gotomeeting_licence)) {
         $params = array('id' => $gotomeeting->id);
         $result = $DB->delete_records('gotomeeting', $params);
     }
@@ -227,4 +239,14 @@ function gotomeeting_get_completion_state($course, $cm, $userid, $type) {
         throw new Exception("Can't find GoToLMS {$cm->instance}");
     }
     return true;
+}
+
+
+function gotomeeting_get_organiser_account_name($licence) {
+    global $DB;
+    
+    if ($gotomeeting_licence = $DB->get_record('gotomeeting_licence', array('id' => $licence))) {
+       return explode('@', $gotomeeting_licence->email)[0];
+    }
+    return null;
 }
