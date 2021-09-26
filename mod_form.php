@@ -60,9 +60,6 @@ class mod_gotomeeting_mod_form extends moodleform_mod {
         $this->add_action_buttons(true, false, null);
     }
 
-    public function data_preprocessing(&$defaultvalues) {
-        parent::data_preprocessing($defaultvalues);
-    }
 
     public function add_completion_rules() {
         $mform = & $this->_form;
