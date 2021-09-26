@@ -31,7 +31,7 @@ $PAGE->set_heading('GoToMeeting config test report');
 $PAGE->set_title('GoToMeeting config test report');
 
 if (!is_siteadmin()) {
-    print_error('nopermissions', 'gotomeeting', '', null);
+    throw new moodle_exception('nopermissions', 'gotomeeting');
 }
 
 $gotomeetingconfig = get_config(mod_gotomeeting\GoToOAuth::PLUGIN_NAME);
@@ -49,9 +49,10 @@ if ($status) {
 
     echo $OUTPUT->footer();
 } else if (!empty($gotomeetingconfig->consumer_key) && !empty($gotomeetingconfig->consumer_secret)) {
-      $consumerkey = trim($gotomeetingconfig->consumer_key);
+    $consumerkey = trim($gotomeetingconfig->consumer_key);
     $redirecturl = $CFG->wwwroot . '/mod/gotomeeting/oauthCallback.php';
-    $url = mod_gotomeeting\GoToOAuth::BASE_URL . "/oauth/v2/authorize?client_id=$consumerkey&response_type=code&redirect_uri=$redirecturl";
+    $url = mod_gotomeeting\GoToOAuth::BASE_URL . "/oauth/v2/authorize?client_id="
+            . "$consumerkey&response_type=code&redirect_uri=$redirecturl";
 
     redirect($url);
 } else {
