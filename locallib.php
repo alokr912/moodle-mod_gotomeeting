@@ -22,6 +22,9 @@
  */
 defined('MOODLE_INTERNAL') || die;
 require_once($CFG->dirroot . '/mod/gotomeeting/classes/GotoOAuth.php');
+/*
+ * @throws moodle_exception
+ */
 
 function creategotomeeting($gotomeeting) {
     global $USER, $DB, $CFG;
@@ -29,7 +32,7 @@ function creategotomeeting($gotomeeting) {
     $gotooauth = new mod_gotomeeting\GoToOAuth();
     $config = get_config(mod_gotomeeting\GoToOAuth::PLUGIN_NAME);
     if (!isset($config->organizer_key) || empty($config->organizer_key)) {
-        print_error("Incomplete GoToMeeting setup");
+        throw new moodle_exception('incomplete_setup', mod_gotomeeting\GoToOAuth::PLUGIN_NAME);
     }
 
     $attributes = array();
@@ -61,7 +64,7 @@ function updategotomeeting($oldgotomeeting, $gotomeeting) {
     $gotooauth = new mod_gotomeeting\GoToOAuth();
     $config = get_config(mod_gotomeeting\GoToOAuth::PLUGIN_NAME);
     if (!isset($config->organizer_key) || empty($config->organizer_key)) {
-        print_error("Incomplete GoToMeeting setup");
+        throw new moodle_exception('incomplete_setup', mod_gotomeeting\GoToOAuth::PLUGIN_NAME);
     }
 
     $attributes = array();
@@ -93,7 +96,7 @@ function deletegotomeeting($gotowebinarid) {
     $config = get_config(mod_gotomeeting\GoToOAuth::PLUGIN_NAME);
 
     if (!isset($config->organizer_key) || empty($config->organizer_key)) {
-        print_error("Incomplete GoToMeeting setup");
+        throw new moodle_exception('incomplete_setup', mod_gotomeeting\GoToOAuth::PLUGIN_NAME);
     }
 
     $responce = $gotooauth->delete("/G2M/rest/meetings/{$gotowebinarid}");
@@ -110,7 +113,7 @@ function get_gotomeeting($gotomeeting) {
     $config = get_config(mod_gotomeeting\GoToOAuth::PLUGIN_NAME);
 
     if (!isset($config->organizer_key) || empty($config->organizer_key)) {
-        print_error("Incomplete GoToMeeting setup");
+        throw new moodle_exception('incomplete_setup', mod_gotomeeting\GoToOAuth::PLUGIN_NAME);
     }
     $context = context_course::instance($gotomeeting->course);
     if (is_siteadmin() OR has_capability('mod/gotomeeting:organiser', $context) OR
