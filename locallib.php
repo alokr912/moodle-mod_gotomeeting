@@ -131,6 +131,9 @@ function get_gotomeeting_attendance($gotomeeting) {
     }
 
     $response = $gotooauth->get("/G2M/rest/meetings/{$gotomeeting->gotomeetingid}/attendees");
+    if (!is_array($response)) {
+        return null;
+    }
 
     $duration = $gotomeeting->enddatetime - $gotomeeting->startdatetime;
 
@@ -141,13 +144,14 @@ function get_gotomeeting_attendance($gotomeeting) {
     $rows = array();
     foreach ($response as $attendance) {
 
+      
         $joinTime = strtotime($attendance->joinTime);
         $leaveTime = strtotime($attendance->leaveTime);
         $differenceInSeconds = $leaveTime - $joinTime;
 
         $attendance_percentage = 0;
         if ($differenceInSeconds) {
-            $attendance_percentage = number_format(($duration * 10 / $differenceInSeconds) * 10, 2);
+            $attendance_percentage = number_format(($attendance->duration * 60 * 100) / $duration, 2);
         }
 
         $rows[] = array($attendance->attendeeName, $attendance->joinTime, $attendance->leaveTime, $attendance_percentage);
@@ -159,7 +163,7 @@ function get_gotomeeting_attendance($gotomeeting) {
     return $table;
 }
 
-function get_gotomeeting_view($gotomeeting) {
+function get_gotomeeting_attendance_view($gotomeeting) {
 
     $gotooauth = new mod_gotomeeting\GoToOAuth($gotomeeting->gotomeeting_licence);
     if (!isset($gotooauth->organizerkey) || empty($gotooauth->organizerkey)) {
@@ -191,6 +195,42 @@ function get_gotomeeting_view($gotomeeting) {
 
 
     $table->data = $rows;
+
+    return $table;
+}
+
+function get_gotomeeting_view($gotomeeting, $cmid) {
+    $meetinginfo = json_decode($gotomeeting->meetinfo);
+    $table = new html_table();
+    $head = array();
+    $head[] = get_string('meetingname', 'gotomeeting');
+    $head[] = get_string('meeting_account', 'gotomeeting');
+    $head[] = get_string('meetingid', 'gotomeeting');
+    $head[] = get_string('startdatetime', 'gotomeeting');
+    $head[] = get_string('enddatetime', 'gotomeeting');
+
+    $head[] = get_string('conference_call_info', 'gotomeeting');
+   // $head[] = get_string('join_url', 'gotomeeting');
+    $head[] = get_string('report', 'gotomeeting');
+   
+    $table->head = $head;
+    $data = array();
+    $data[] = $gotomeeting->name;
+    $data[] = gotomeeting_get_organiser_account_name($gotomeeting->gotomeeting_licence);
+    $data[] = $gotomeeting->gotomeetingid;
+    $data[] = userdate($gotomeeting->startdatetime);
+    $data[] = userdate($gotomeeting->enddatetime);
+    $data[] = $meetinginfo->conferenceCallInfo;
+
+     $report_link = new moodle_url('attendance.php', array('id' => $cmid));
+    $data[] = html_writer::link($report_link, get_string('report', 'gotomeeting'));
+    
+    $table->data[] = $data;
+    
+    $cell2 = new html_table_cell(html_writer::link(trim(get_gotomeeting($gotomeeting), '"'), get_string('join_url', 'gotomeeting'), array("target" => "_blank", 'class' => 'btn btn-primary')));
+    $cell2->colspan = 7;
+    $cell2->style = 'text-align:center;';
+    $table->data[] = array($cell2);
 
     return $table;
 }

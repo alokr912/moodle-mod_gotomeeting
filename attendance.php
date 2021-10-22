@@ -35,14 +35,8 @@ if ($id) {
     $gotomeeting = $DB->get_record('gotomeeting', array('id' => $cm->instance), '*', MUST_EXIST);
 }
 $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
-$meeturl = '';
-$meetinfo = json_decode($gotomeeting->meetinfo);
 
-$joinurl = get_gotomeeting($gotomeeting);
 
-$meeturl = $gotomeeting;
-
-$meetinginfo = json_decode($gotomeeting->meetinfo);
 require_course_login($course, true, $cm);
 $context = context_module::instance($cm->id);
 require_capability('mod/gotomeeting:view', $context);
@@ -54,15 +48,15 @@ $PAGE->set_heading($course->fullname);
 
 
 echo $OUTPUT->header();
-echo $OUTPUT->heading('Course:  ' . $course->fullname);
+echo $OUTPUT->heading(get_string('modulename','gotomeeting').' : ' . $gotomeeting->name);
 $table = get_gotomeeting_attendance($gotomeeting);
 
 
-
-
-
-
-echo html_writer::table($table);
+if($table){
+  echo html_writer::table($table);  
+}else{
+    echo 'No Attendance found';
+}
 
 
 

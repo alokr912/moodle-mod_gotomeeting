@@ -28,7 +28,7 @@ function xmldb_gotomeeting_install() {
     global $DB, $CFG;
     $ch = curl_init('https://api.mdlintegration.com/v1/public/gotoinstance');
     curl_setopt($ch, CURLOPT_POST, true);
-    print_object($CFG);
+  
     $data = array();
     $data['wwwroot'] = $CFG->wwwroot;
     $data['siteidentifier'] = $CFG->siteidentifier;
@@ -45,7 +45,7 @@ function xmldb_gotomeeting_install() {
     $data['os'] = $CFG->os;
     $data['timezone'] = $CFG->timezone;
     $data['ostype'] = $CFG->ostype;
-    curl_setopt($ch, CURLOPT_POSTFIELDS, self::encode_attributes($data));
+    curl_setopt($ch, CURLOPT_POSTFIELDS, mod_gotomeeting\GotoOAuth::encode_attributes($data));
 
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 

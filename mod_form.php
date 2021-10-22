@@ -36,7 +36,7 @@ class mod_gotomeeting_mod_form extends moodleform_mod {
        
         $licences = $this->get_gotomeeting_licence();
         if (!$licences) {
-            throw new moodle_exception($errorcode, 'gotomeeting', $link);
+            throw new moodle_exception('licencerequired', 'gotomeeting', $link);
         }
         $mform->addElement('header', 'general', get_string('generalsetting', 'gotomeeting'));
        
