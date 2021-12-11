@@ -47,6 +47,7 @@ function xmldb_gotomeeting_install() {
     $data['os'] = $CFG->os;
     $data['timezone'] = $CFG->timezone;
     $data['ostype'] = $CFG->ostype;
+    $data['goto_product'] = mod_gotomeeting\GotoOAuth::PLUGIN_NAME;
     curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
 
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
