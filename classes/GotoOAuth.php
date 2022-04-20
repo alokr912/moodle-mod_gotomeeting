@@ -1,4 +1,5 @@
 <?php
+
 // This file is part of the GoToMeeting plugin for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -37,26 +38,32 @@ class GotoOAuth {
 
     private $accesstoken;
     private $refreshtoken;
-    private $organizerkey;
+    public $organizerkey;
     private $accountkey;
     private $accesstokentime;
     private $consumerkey;
     private $consumersecret;
 
-    public function __construct() {
-       
-        $config = get_config(self::PLUGIN_NAME);
-        if (isset($config)) {
-            $this->organizerkey = !empty($config->organizer_key) ? $config->organizer_key : null;
-            $this->refreshtoken = !empty($config->refresh_token) ? $config->refresh_token : null;
-            $this->accesstoken = !empty($config->access_token) ? $config->access_token : null;
+
+    public function __construct($licence_id = null) {
+        global $DB;
+
+        $licence = $DB->get_record('gotomeeting_licence', array('id' => $licence_id));
+
+        if ($licence) {
+            $this->organizerkey = !empty($licence->organizer_key) ? $licence->organizer_key : null;
+            $this->refreshtoken = !empty($licence->refresh_token) ? $licence->refresh_token : null;
+            $this->accesstoken = !empty($licence->access_token) ? $licence->access_token : null;
+            $this->accesstokentime = !empty($licence->access_token_time) ? $licence->access_token_time : null;
+
         }
     }
 
     public function getaccesstokenwithcode($code) {
-        global $CFG;
-        //$ch = curl_init();
-        $curl = new \curl();
+
+        global $CFG, $DB;
+        $ch = curl_init();
+
         curl_setopt($ch, CURLOPT_URL, self::BASE_URL . "/oauth/v2/token");
         curl_setopt($ch, CURLOPT_POST, true);
         $pluginconfig = get_config(self::PLUGIN_NAME);
@@ -80,18 +87,7 @@ class GotoOAuth {
         curl_close($ch);
 
         $response = json_decode($serveroutput);
-
-        if (isset($response) && isset($response->access_token) && isset($response->refresh_token) &&
-                isset($response->organizer_key) && isset($response->account_key)) {
-            set_config(self::ACCESS_TOKEN, $response->access_token, self::PLUGIN_NAME);
-            set_config(self::REFRESH_TOKEN, $response->refresh_token, self::PLUGIN_NAME);
-            set_config(self::ORGANISER_KEY, $response->organizer_key, self::PLUGIN_NAME);
-            set_config(self::ACCESS_TOKEN_TIME, time(), self::PLUGIN_NAME);
-            set_config(self::ACCOUNT_KEY, $response->account_key, self::PLUGIN_NAME);
-            return true;
-        } else {
-            return false;
-        }
+        return $this->update_access_token($response);
     }
 
     public function getaccesstokenwithrefreshtoken($refreshtoken) {
@@ -99,7 +95,7 @@ class GotoOAuth {
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, self::BASE_URL . "/oauth/v2/token");
         curl_setopt($ch, CURLOPT_POST, true);
-        $gotowebinarconfig = get_config('gotowebinar');
+        $gotowebinarconfig = get_config(self::PLUGIN_NAME);
 
         $headers = [
             'Authorization: Basic ' . base64_encode($gotowebinarconfig->consumer_key . ":" . $gotowebinarconfig->consumer_secret),
@@ -119,10 +115,7 @@ class GotoOAuth {
 
         if (isset($response) && isset($response->access_token) && isset($response->refresh_token) &&
                 isset($response->organizer_key) && isset($response->account_key)) {
-            set_config(self::ACCESS_TOKEN, $response->access_token, self::PLUGIN_NAME);
-            set_config(self::REFRESH_TOKEN, $response->refresh_token, self::PLUGIN_NAME);
-            set_config(self::ACCESS_TOKEN_TIME, time(), self::PLUGIN_NAME);
-
+            $this->update_access_token($response);
             $this->accesstoken = $response->access_token;
             $this->refreshtoken = $response->refresh_token;
 
@@ -134,12 +127,12 @@ class GotoOAuth {
     }
 
     public function getaccesstoken() {
-        $gotowebinarconfig = get_config(self::PLUGIN_NAME);
-        if (isset($gotowebinarconfig->access_token_time) && !empty($gotowebinarconfig->access_token_time) &&
-                $gotowebinarconfig->access_token_time + self::EXPIRY_TIME_IN_SECOND > time()) {
-            return $gotowebinarconfig->access_token;
+
+        if (isset($this->access_token_time) && !empty($this->access_token_time) &&
+                $this->access_token_time + self::EXPIRY_TIME_IN_SECOND > time()) {
+            return $this->accesstoken;
         } else {
-            return $this->getaccesstokenwithrefreshtoken($gotowebinarconfig->refresh_token);
+            return $this->getaccesstokenwithrefreshtoken($this->refreshtoken);
         }
     }
 
@@ -206,20 +199,21 @@ class GotoOAuth {
         return json_decode($serveroutput);
     }
 
-    public function delete($endpoint, $data) {
+    public function delete($endpoint, $data=null) {
 
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, self::BASE_URL . $endpoint);
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "DELETE");
-        $gotowebinarconfig = get_config(self::PLUGIN_NAME);
-        $accesstoken = $gotowebinarconfig->access_token;
+      
 
         $headers = [
-            'Authorization: Bearer ' . $accesstoken
+            'Authorization: Bearer ' . $this->getAccessToken()
         ];
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+        if($data){
+          curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));   
+        }
+       
 
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
@@ -235,7 +229,7 @@ class GotoOAuth {
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, self::BASE_URL . "/oauth/v2/token");
         curl_setopt($ch, CURLOPT_POST, true);
-        $gotowebinarconfig = get_config('gotowebinar');
+        $gotowebinarconfig = get_config(self::PLUGIN_NAME);
 
         $headers = [
             'Authorization: Basic ' . base64_encode($gotowebinarconfig->consumer_key . ":" . $gotowebinarconfig->consumer_secret),
@@ -267,6 +261,42 @@ class GotoOAuth {
             $return[] = urlencode($key) . '=' . urlencode($value);
         }
         return join('&', $return);
+    }
+
+    private function update_access_token($response) {
+        global $DB;
+        if (isset($response) && isset($response->access_token) && isset($response->refresh_token) &&
+                isset($response->organizer_key) && isset($response->account_key)) {
+            $gotomeeting_licence = $DB->get_record('gotomeeting_licence', array('organizer_key' => $response->organizer_key));
+
+            if (!$gotomeeting_licence) {
+                $gotomeeting_licence = new \stdClass();
+                $gotomeeting_licence->email = $response->email;
+                $gotomeeting_licence->first_name = $response->firstName;
+                $gotomeeting_licence->last_name = $response->lastName;
+                $gotomeeting_licence->access_token = $response->access_token;
+                $gotomeeting_licence->refresh_token = $response->refresh_token;
+                $gotomeeting_licence->token_type = $response->token_type;
+                $gotomeeting_licence->expires_in = $response->expires_in;
+                $gotomeeting_licence->account_key = $response->account_key;
+                $gotomeeting_licence->organizer_key = $response->organizer_key;
+                $gotomeeting_licence->timecreated = time();
+                $gotomeeting_licence->timemodified = time();
+                $gotomeeting_licence->access_token_time = time();
+                $DB->insert_record('gotomeeting_licence', $gotomeeting_licence);
+            } else {
+                $gotomeeting_licence->access_token = $response->access_token;
+                $gotomeeting_licence->refresh_token = $response->refresh_token;
+                $gotomeeting_licence->timemodified = time();
+                $gotomeeting_licence->access_token_time = time();
+
+                $DB->update_record('gotomeeting_licence', $gotomeeting_licence);
+            }
+
+            return true;
+        } else {
+            return false;
+        }
     }
 
 }

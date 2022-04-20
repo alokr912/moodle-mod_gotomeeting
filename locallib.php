@@ -1,4 +1,5 @@
 <?php
+
 // This file is part of the GoToMeeting plugin for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -29,10 +30,12 @@ require_once($CFG->dirroot . '/mod/gotomeeting/classes/GotoOAuth.php');
 function creategotomeeting($gotomeeting) {
     global $USER, $DB, $CFG;
 
-    $gotooauth = new mod_gotomeeting\GoToOAuth();
-    $config = get_config(mod_gotomeeting\GoToOAuth::PLUGIN_NAME);
-    if (!isset($config->organizer_key) || empty($config->organizer_key)) {
-        throw new moodle_exception('incomplete_setup', mod_gotomeeting\GoToOAuth::PLUGIN_NAME);
+
+    $gotooauth = new mod_gotomeeting\GoToOAuth($gotomeeting->licence);
+
+    if (!isset($gotooauth->organizerkey) || empty($gotooauth->organizerkey)) {
+        print_error("Incomplete GoToMeeting setup");
+
     }
 
     $attributes = array();
@@ -61,12 +64,13 @@ function updategotomeeting($oldgotomeeting, $gotomeeting) {
     global $USER, $DB, $CFG;
 
     $result = false;
-    $gotooauth = new mod_gotomeeting\GoToOAuth();
-    $config = get_config(mod_gotomeeting\GoToOAuth::PLUGIN_NAME);
-    if (!isset($config->organizer_key) || empty($config->organizer_key)) {
-        throw new moodle_exception('incomplete_setup', mod_gotomeeting\GoToOAuth::PLUGIN_NAME);
-    }
 
+    $gotooauth = new mod_gotomeeting\GoToOAuth($oldgotomeeting->gotomeeting_licence);
+
+    if (!isset($gotooauth->organizerkey) || empty($gotooauth->organizerkey)) {
+        print_error("Incomplete GoToMeeting setup");
+
+    }
     $attributes = array();
     $attributes['subject'] = $gotomeeting->name;
     $dstoffset = dst_offset_on($gotomeeting->startdatetime, get_user_timezone());
@@ -90,13 +94,12 @@ function updategotomeeting($oldgotomeeting, $gotomeeting) {
     return $result;
 }
 
-function deletegotomeeting($gotowebinarid) {
+function deletegotomeeting($gotowebinarid, $gotomeeting_licence) {
 
-    $gotooauth = new mod_gotomeeting\GoToOAuth();
-    $config = get_config(mod_gotomeeting\GoToOAuth::PLUGIN_NAME);
 
-    if (!isset($config->organizer_key) || empty($config->organizer_key)) {
-        throw new moodle_exception('incomplete_setup', mod_gotomeeting\GoToOAuth::PLUGIN_NAME);
+    $gotooauth = new mod_gotomeeting\GoToOAuth($gotomeeting_licence);
+    if (!isset($gotooauth->organizerkey) || empty($gotooauth->organizerkey)) {
+        print_error("Incomplete GoToMeeting setup");
     }
 
     $responce = $gotooauth->delete("/G2M/rest/meetings/{$gotowebinarid}");
@@ -109,11 +112,11 @@ function deletegotomeeting($gotowebinarid) {
 
 function get_gotomeeting($gotomeeting) {
 
-    $gotooauth = new mod_gotomeeting\GoToOAuth();
-    $config = get_config(mod_gotomeeting\GoToOAuth::PLUGIN_NAME);
 
-    if (!isset($config->organizer_key) || empty($config->organizer_key)) {
-        throw new moodle_exception('incomplete_setup', mod_gotomeeting\GoToOAuth::PLUGIN_NAME);
+    $gotooauth = new mod_gotomeeting\GoToOAuth($gotomeeting->gotomeeting_licence);
+    if (!isset($gotooauth->organizerkey) || empty($gotooauth->organizerkey)) {
+        print_error("Incomplete GoToMeeting setup");
+
     }
     $context = context_course::instance($gotomeeting->course);
     if (is_siteadmin() OR has_capability('mod/gotomeeting:organiser', $context) OR
@@ -128,4 +131,116 @@ function get_gotomeeting($gotomeeting) {
         $meetinginfo = json_decode($gotomeeting->meetinfo);
         return $meetinginfo->joinURL;
     }
+}
+
+function get_gotomeeting_attendance($gotomeeting) {
+
+    $gotooauth = new mod_gotomeeting\GoToOAuth($gotomeeting->gotomeeting_licence);
+    if (!isset($gotooauth->organizerkey) || empty($gotooauth->organizerkey)) {
+        print_error("Incomplete GoToMeeting setup");
+    }
+
+    $response = $gotooauth->get("/G2M/rest/meetings/{$gotomeeting->gotomeetingid}/attendees");
+    if (!is_array($response)) {
+        return null;
+    }
+
+    $duration = $gotomeeting->enddatetime - $gotomeeting->startdatetime;
+
+    $table = new html_table();
+
+    $table->head = array('Attendee', 'Join time', 'Leave time', 'Completed Percentage');
+
+    $rows = array();
+    foreach ($response as $attendance) {
+
+      
+        $joinTime = strtotime($attendance->joinTime);
+        $leaveTime = strtotime($attendance->leaveTime);
+        $differenceInSeconds = $leaveTime - $joinTime;
+
+        $attendance_percentage = 0;
+        if ($differenceInSeconds) {
+            $attendance_percentage = number_format(($attendance->duration * 60 * 100) / $duration, 2);
+        }
+
+        $rows[] = array($attendance->attendeeName, $attendance->joinTime, $attendance->leaveTime, $attendance_percentage);
+    }
+
+
+    $table->data = $rows;
+
+    return $table;
+}
+
+function get_gotomeeting_attendance_view($gotomeeting) {
+
+    $gotooauth = new mod_gotomeeting\GoToOAuth($gotomeeting->gotomeeting_licence);
+    if (!isset($gotooauth->organizerkey) || empty($gotooauth->organizerkey)) {
+        print_error("Incomplete GoToMeeting setup");
+    }
+
+    $response = $gotooauth->get("/G2M/rest/meetings/{$gotomeeting->gotomeetingid}/attendees");
+
+    $duration = $gotomeeting->enddatetime - $gotomeeting->startdatetime;
+
+    $table = new html_table();
+
+    $table->head = array('Attendee', 'Join time', 'Leave time', 'Completed Percentage');
+
+    $rows = array();
+    foreach ($response as $attendance) {
+
+        $joinTime = strtotime($attendance->joinTime);
+        $leaveTime = strtotime($attendance->leaveTime);
+        $differenceInSeconds = $leaveTime - $joinTime;
+
+        $attendance_percentage = 0;
+        if ($differenceInSeconds) {
+            $attendance_percentage = number_format(($duration * 10 / $differenceInSeconds) * 10, 2);
+        }
+
+        $rows[] = array($attendance->attendeeName, $attendance->joinTime, $attendance->leaveTime, $attendance_percentage);
+    }
+
+
+    $table->data = $rows;
+
+    return $table;
+}
+
+function get_gotomeeting_view($gotomeeting, $cmid) {
+    $meetinginfo = json_decode($gotomeeting->meetinfo);
+    $table = new html_table();
+    $head = array();
+    $head[] = get_string('meetingname', 'gotomeeting');
+    $head[] = get_string('meeting_account', 'gotomeeting');
+    $head[] = get_string('meetingid', 'gotomeeting');
+    $head[] = get_string('startdatetime', 'gotomeeting');
+    $head[] = get_string('enddatetime', 'gotomeeting');
+
+    $head[] = get_string('conference_call_info', 'gotomeeting');
+   // $head[] = get_string('join_url', 'gotomeeting');
+    $head[] = get_string('report', 'gotomeeting');
+   
+    $table->head = $head;
+    $data = array();
+    $data[] = $gotomeeting->name;
+    $data[] = gotomeeting_get_organiser_account_name($gotomeeting->gotomeeting_licence);
+    $data[] = $gotomeeting->gotomeetingid;
+    $data[] = userdate($gotomeeting->startdatetime);
+    $data[] = userdate($gotomeeting->enddatetime);
+    $data[] = $meetinginfo->conferenceCallInfo;
+
+     $report_link = new moodle_url('attendance.php', array('id' => $cmid));
+    $data[] = html_writer::link($report_link, get_string('report', 'gotomeeting'));
+    
+    $table->data[] = $data;
+    
+    $cell2 = new html_table_cell(html_writer::link(trim(get_gotomeeting($gotomeeting), '"'), get_string('join_url', 'gotomeeting'), array("target" => "_blank", 'class' => 'btn btn-primary')));
+    $cell2->colspan = 7;
+    $cell2->style = 'text-align:center;';
+    $table->data[] = array($cell2);
+
+    return $table;
 }

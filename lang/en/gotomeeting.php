@@ -42,8 +42,14 @@ $string['generalsetting'] = 'General setting';
 $string['meetingname'] = 'Title';
 $string['meetingheader'] = 'GoToMeeting setting ';
 $string['gotomeetingintro'] = 'Description';
+
 $string['startdatetime'] = 'Start date & time';
 $string['enddatetime'] = 'End date & time';
+
+$string['join_url'] = 'Join URL';
+$string['startdatetime'] = 'Start Date & Time';
+$string['enddatetime'] = 'End Date & Time';
+
 $string['invalidstartdatetime'] = 'Start date and time must be a future value';
 $string['invalidenddatetime'] = 'End date and time must be a future value';
 $string['enddatetimegtsdt'] = 'End date and time should be more than start date and time';
@@ -53,6 +59,7 @@ $string['startdatetimerequired'] = 'Please enter meeting start date and time';
 $string['enddatetimerequired'] = 'Please enter meeting end date and time';
 $string['future_startdatetime_required'] = 'Start date time must be a future time';
 $string['future_enddatetime_required'] = 'End date time must be future time';
+
 $string['enddatetimesbgtstartdatetime'] = 'End date time should be more that start date time.';
 $string['incomplete_setup'] = 'Incomplete GoToMeeting setup';
 $string['setup_status'] = 'GoToWebinar setup status';
@@ -68,3 +75,16 @@ $string['setup_key_missing'] = 'GoToMeeting consumer key missing';
 $string['setup_secret_missing'] = 'GoToMeeting consumer secert missing';
 $string[''] = '';
 $string[''] = '';
+
+$string['enddatetimesbgtstartdatetime'] = 'End date time should be more that Start date time.';
+$string['addlicence'] = 'Add new licence';
+$string['licence'] = 'Licence';
+$string['licencerequired']= 'GoToMeeting Licence required.';
+$string['meetingid'] = 'Meeting ID';
+$string['meeting_account'] = 'Meeting Account';
+$string['account_name'] = 'Account Name ';
+$string['conference_call_info'] = 'Conference Call Info';
+$string['report']= 'Report';
+
+
+
