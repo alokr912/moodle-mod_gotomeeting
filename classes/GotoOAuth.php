@@ -23,6 +23,7 @@
 
 namespace mod_gotomeeting;
 
+
 class GotoOAuth {
 
     public const BASE_URL = "https://api.getgo.com";
@@ -43,7 +44,7 @@ class GotoOAuth {
     private $consumersecret;
 
     public function __construct() {
-
+       
         $config = get_config(self::PLUGIN_NAME);
         if (isset($config)) {
             $this->organizerkey = !empty($config->organizer_key) ? $config->organizer_key : null;
@@ -54,7 +55,8 @@ class GotoOAuth {
 
     public function getaccesstokenwithcode($code) {
         global $CFG;
-        $ch = curl_init();
+        //$ch = curl_init();
+        $curl = new \curl();
         curl_setopt($ch, CURLOPT_URL, self::BASE_URL . "/oauth/v2/token");
         curl_setopt($ch, CURLOPT_POST, true);
         $pluginconfig = get_config(self::PLUGIN_NAME);
