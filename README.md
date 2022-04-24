@@ -9,5 +9,5 @@ Update timezone Home -> Site administration -> Location -> Update timezones
 </a>
 
 Latest version of this plugin is available at
-https://www.mdlintegration.com/moodle-gotomeeting-integration/
+https://www.mdlintegration.com/gotomeeting/
 

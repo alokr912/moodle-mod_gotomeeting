@@ -1,34 +1,60 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <XMLDB PATH="mod/gotomeeting/db" VERSION="2016052716" COMMENT="XMLDB file for Moodle mod/gotomeeting"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
-  <TABLES>
-    <TABLE NAME="gotomeeting" COMMENT="">
-      <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
-        <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="intro" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="The description of the assignment. This field is used by feature MOD_INTRO."/>
-        <FIELD NAME="introformat" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The format of the description field of the assignment. This field is used by feature MOD_INTRO."/>
-        <FIELD NAME="meetingtype" SEQUENCE="false" TYPE="char" LENGTH="100" NOTNULL="true"/>
-        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="User who created the meeting" PREVIOUS="introformat" NEXT="templatescoid"/>
-        <FIELD NAME="meetinfo" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" ENUM="false" COMMENT="Meeting URL" PREVIOUS="templatescoid" NEXT="starttime"/>
-        <FIELD NAME="gotomeetingid"  TYPE="char" LENGTH="50"  NOTNULL="false" DEFAULT="0" />     
-        <FIELD NAME="startdatetime" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="Meeting start time" PREVIOUS="meeturl" NEXT="endtime"/>
-        <FIELD NAME="enddatetime" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="Meeting start time" PREVIOUS="starttime" NEXT="completiongotomeeting"/>
-        <FIELD NAME="completionparticipation" TYPE="int" LENGTH="3" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="Meeting start time" PREVIOUS="endtime" NEXT="meetingpublic"/>
-        <FIELD NAME="meetingpublic" TYPE="int" LENGTH="1" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="Meetings can be public or non-public" PREVIOUS="completiongotomeeting" NEXT="timecreated"/>
-        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+    <TABLES>
+        <TABLE NAME="gotomeeting" COMMENT="Store GoToMeeting module information ">
+            <FIELDS>
+                <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+                <FIELD NAME="gotomeeting_licence" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+                <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+                <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="intro" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="The description of the assignment. This field is used by feature MOD_INTRO."/>
+                <FIELD NAME="introformat" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The format of the description field of the assignment. This field is used by feature MOD_INTRO."/>
+                <FIELD NAME="meetingtype" SEQUENCE="false" TYPE="char" LENGTH="100" NOTNULL="true"/>
+                <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="User who created the meeting" PREVIOUS="introformat" NEXT="templatescoid"/>
+                <FIELD NAME="meetinfo" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" ENUM="false" COMMENT="Meeting URL" PREVIOUS="templatescoid" NEXT="starttime"/>
+                <FIELD NAME="gotomeetingid"  TYPE="char" LENGTH="50"  NOTNULL="false" DEFAULT="0" />     
+                <FIELD NAME="startdatetime" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="Meeting start time" PREVIOUS="meeturl" NEXT="endtime"/>
+                <FIELD NAME="enddatetime" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="Meeting start time" PREVIOUS="starttime" NEXT="completiongotomeeting"/>
+                <FIELD NAME="completionparticipation" TYPE="int" LENGTH="3" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="Meeting start time" PREVIOUS="endtime" NEXT="meetingpublic"/>
+                <FIELD NAME="meetingpublic" TYPE="int" LENGTH="1" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="Meetings can be public or non-public" PREVIOUS="completiongotomeeting" NEXT="timecreated"/>
+                <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+                <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         
-      </FIELDS>
-      <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
-      </KEYS>
-      <INDEXES>
-        <INDEX NAME="course" UNIQUE="false" FIELDS="course"/>
-      </INDEXES>
-    </TABLE>
-  </TABLES>
+            </FIELDS>
+            <KEYS>
+                <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+            </KEYS>
+            <INDEXES>
+                <INDEX NAME="course" UNIQUE="false" FIELDS="course"/>
+            </INDEXES>
+        </TABLE>
+        <TABLE NAME="gotomeeting_licence" COMMENT="">
+            <FIELDS>
+                <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+                <FIELD NAME="email" TYPE="char" LENGTH="255" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+                <FIELD NAME="first_name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="last_name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="access_token" TYPE="text" NOTNULL="true" SEQUENCE="false" />
+                <FIELD NAME="refresh_token" TYPE="text"  NOTNULL="false" SEQUENCE="false" />
+                <FIELD NAME="token_type" TYPE="char" LENGTH="100"  NOTNULL="false" SEQUENCE="false" />
+                <FIELD NAME="expires_in" TYPE="int" LENGTH="10"  NOTNULL="false" SEQUENCE="false"  />
+                <FIELD NAME="access_token_time" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+                <FIELD NAME="account_key" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" />
+                <FIELD NAME="organizer_key" TYPE="char" LENGTH="100" NOTNULL="true"  DEFAULT="0" SEQUENCE="false" />
+                <FIELD NAME="active" TYPE="int" LENGTH="1" NOTNULL="false" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" ENUM="false" COMMENT="Meetings can be public or non-public" PREVIOUS="completiongotomeeting" NEXT="timecreated"/>
+                <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+                <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+    
+            </FIELDS>
+            <KEYS>
+                <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+            </KEYS>
+            <INDEXES>
+                <INDEX NAME="organizer_key" UNIQUE="false" FIELDS="organizer_key"/>
+            </INDEXES>
+        </TABLE>
+    </TABLES>
 </XMLDB>
