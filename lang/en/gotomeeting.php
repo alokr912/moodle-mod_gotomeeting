@@ -59,7 +59,7 @@ $string['startdatetimerequired'] = 'Please enter meeting start date and time';
 $string['enddatetimerequired'] = 'Please enter meeting end date and time';
 $string['future_startdatetime_required'] = 'Start date time must be a future time';
 $string['future_enddatetime_required'] = 'End date time must be future time';
-
+$string[''] = '';
 $string['enddatetimesbgtstartdatetime'] = 'End date time should be more that start date time.';
 $string['incomplete_setup'] = 'Incomplete GoToMeeting setup';
 $string['setup_status'] = 'GoToWebinar setup status';
@@ -73,9 +73,10 @@ $string['setup_title'] = 'GoToMeeting config test report';
 $string['setup_config_validation'] = 'GoToMeeting config validation ';
 $string['setup_key_missing'] = 'GoToMeeting consumer key missing';
 $string['setup_secret_missing'] = 'GoToMeeting consumer secert missing';
-$string[''] = '';
-$string[''] = '';
-
+$string['license_title'] = 'GoToMeeting License';
+$string['license_heading'] = 'GoToMeeting License';
+$string['license_enabled'] = 'License enabled';
+$string['license_disabled'] = 'License disabled';
 $string['enddatetimesbgtstartdatetime'] = 'End date time should be more that Start date time.';
 $string['addlicence'] = 'Add new licence';
 $string['licence'] = 'Licence';

@@ -280,6 +280,7 @@ class GotoOAuth {
                 $gotomeeting_licence->expires_in = $response->expires_in;
                 $gotomeeting_licence->account_key = $response->account_key;
                 $gotomeeting_licence->organizer_key = $response->organizer_key;
+                $gotomeeting_licence->active =1;
                 $gotomeeting_licence->timecreated = time();
                 $gotomeeting_licence->timemodified = time();
                 $gotomeeting_licence->access_token_time = time();
