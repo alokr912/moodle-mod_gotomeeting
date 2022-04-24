@@ -27,8 +27,8 @@ require_login();
 $PAGE->set_context(context_system::instance());
 $PAGE->set_url(new moodle_url($CFG->wwwroot . '/mod/gotomeeting/setup.php'));
 $PAGE->set_pagelayout('admin');
-$PAGE->set_heading('GoToMeeting config test report');
-$PAGE->set_title('GoToMeeting config test report');
+$PAGE->set_heading(get_string('setup_heading','gotomeeting'));
+$PAGE->set_title(get_string('setup_title','gotomeeting'));
 
 if (!is_siteadmin()) {
     throw new moodle_exception('nopermissions', 'gotomeeting');
@@ -36,16 +36,17 @@ if (!is_siteadmin()) {
 
 $gotomeetingconfig = get_config(mod_gotomeeting\GoToOAuth::PLUGIN_NAME);
 
-$gotoauth = new mod_gotomeeting\GoToOAuth();
+$gotoauth = new mod_gotomeeting\GoToOAuth(null);
 $status = $gotoauth->getSetupStatus();
+
 if ($status) {
     echo $OUTPUT->header();
-    echo html_writer::div('GoToWebinar setup status ', 'alert alert-info');
-    echo html_writer::div('GoToWebinar config  organizer email ' . $status->email, 'alert alert-success');
-    echo html_writer::div('GoToWebinar config organizer firstName ' . $status->firstName, 'alert alert-success');
-    echo html_writer::div('GoToWebinar config  organizer lastName ' . $status->lastName, 'alert alert-success');
-    echo html_writer::div('GoToWebinar config  organizer key ' . $status->organizer_key, 'alert alert-success');
-    echo html_writer::div('GoToWebinar config  account key ' . $status->account_key, 'alert alert-success');
+    echo html_writer::div(get_string('setup_status','gotomeeting') , 'alert alert-info');
+    echo html_writer::div(get_string('setup_status','gotomeeting',  $status->email), 'alert alert-success');
+    echo html_writer::div(get_string('setup_firstname','gotomeeting', $status->firstName), 'alert alert-success');
+    echo html_writer::div(get_string('setup_lastname','gotomeeting', $status->lastName), 'alert alert-success');
+    echo html_writer::div(get_string('setup_okey','gotomeeting', $status->organizer_key), 'alert alert-success');
+    echo html_writer::div(get_string('setup_akey','gotomeeting', $status->account_key), 'alert alert-success');
 
     echo $OUTPUT->footer();
 } else if (!empty($gotomeetingconfig->consumer_key) && !empty($gotomeetingconfig->consumer_secret)) {
@@ -59,15 +60,15 @@ if ($status) {
 
     echo $OUTPUT->header();
 
-    echo html_writer::div('GoToMeeting config validation ', 'alert alert-info');
+    echo html_writer::div(get_string('setup_akey','gotomeeting'), 'alert alert-info');
 
     if (isset($gotomeetingconfig->consumer_key) && $gotomeetingconfig->consumer_key == '') {
 
-        echo html_writer::div('GoToMeeting consumer key missing', 'alert alert-danger');
+        echo html_writer::div(get_string('setup_key_missing','gotomeeting'), 'alert alert-danger');
     }
     if (isset($gotomeetingconfig->consumer_secret) && $gotomeetingconfig->consumer_secret == '') {
 
-        echo html_writer::div('GoToMeeting consumer secert missing', 'alert alert-danger');
+        echo html_writer::div(get_string('setup_secret_missing','gotomeeting'), 'alert alert-danger');
     }
 
     echo $OUTPUT->footer();
