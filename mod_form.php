@@ -1,4 +1,5 @@
 <?php
+
 // This file is part of the GoToMeeting plugin for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -31,14 +32,28 @@ class mod_gotomeeting_mod_form extends moodleform_mod {
     public function definition() {
 
         $mform = $this->_form;
-        $gotomeetingconfig = get_config('gotomeeting');
+        
+       
+        $licences = $this->get_gotomeeting_licence();
+        if (!$licences) {
+            throw new moodle_exception('licencerequired', 'gotomeeting', $link);
+        }
         $mform->addElement('header', 'general', get_string('generalsetting', 'gotomeeting'));
-
+       
+        $mform->addElement('select', 'licence', get_string('licence', 'gotomeeting'), $licences);
+        if(isset($this->get_current()->update)){
+           $mform->disabledIf('licence',null);
+        }else{
+        $mform->addRule('licence', get_string('licencerequired', 'gotomeeting'), 'required', '', 'client');
+            
+        } 
         $mform->addElement('text', 'name', get_string('meetingname', 'gotomeeting'));
         $mform->setType('name', PARAM_TEXT);
         $mform->addRule('name', get_string('meetingnamerequired', 'gotomeeting'), 'required', '', 'server');
 
         $this->standard_intro_elements();
+        //$this->add_intro_editor(true, get_string('gotomeetingintro', 'gotomeeting'));
+
 
         $mform->addElement('header', 'meetingheader', get_string('meetingheader', 'gotomeeting'));
 
@@ -123,6 +138,17 @@ class mod_gotomeeting_mod_form extends moodleform_mod {
             }
         }
         return $data;
+    }
+
+    private function get_gotomeeting_licence() {
+        global $DB;
+        $licences = array();
+        $gotomeeting_licences = $DB->get_records('gotomeeting_licence',null,'email');
+        foreach ($gotomeeting_licences as $gotomeeting_licences) {
+
+            $licences[$gotomeeting_licences->id] = $gotomeeting_licences->email;
+        }
+        return $licences;
     }
 
 }
