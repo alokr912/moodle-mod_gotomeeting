@@ -21,7 +21,10 @@
  * @copyright 2017 Alok Kumar Rai <alokr.mail@gmail.com,alokkumarrai@outlook.in>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-require_once('../../config.php');
+
+require('../../config.php');
+require_once('lib.php');
+
 require_once($CFG->dirroot . '/mod/gotomeeting/locallib.php');
 require_once($CFG->libdir . '/completionlib.php');
 global $DB, $USER;
@@ -35,6 +38,7 @@ if ($id) {
 }
 $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
 $meeturl = '';
+$meetinfo = json_decode($gotomeeting->meetinfo);
 
 $joinurl = get_gotomeeting($gotomeeting);
 
@@ -53,6 +57,7 @@ $completion = new completion_info($course);
 $completion->set_module_viewed($cm);
 echo $OUTPUT->header();
 echo $OUTPUT->heading('Course:  ' . $course->fullname);
+
 $table = new html_table();
 $table->head = array('GoToMeeting');
 $table->headspan = array(2);
@@ -102,6 +107,10 @@ $cell2->colspan = 2;
 $cell2->style = 'text-align:center;';
 
 $table->data[] = array($cell2);
+
+$table = get_gotomeeting_view($gotomeeting,$cm->id);
+
+
 
 echo html_writer::table($table);
 
