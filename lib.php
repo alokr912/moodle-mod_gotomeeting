@@ -24,7 +24,7 @@ defined('MOODLE_INTERNAL') || die;
 
 require_once('locallib.php');
 require_once($CFG->dirroot . '/calendar/lib.php');
-
+require_once($CFG->libdir . '/filelib.php');
 function gotomeeting_get_coursemodule_info($coursemodule) {
     global $DB;
 
