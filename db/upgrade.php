@@ -41,7 +41,7 @@ function xmldb_gotomeeting_upgrade($oldversion) {
 
         $table->add_field('expires_in', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
         $table->add_field('access_token_time', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
-      
+
         $table->add_field('account_key', XMLDB_TYPE_CHAR, '55', null, XMLDB_NOTNULL, null, '0');
         $table->add_field('organizer_key', XMLDB_TYPE_CHAR, '55', null, XMLDB_NOTNULL, null, '0');
         $table->add_field('active', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0');
@@ -57,6 +57,18 @@ function xmldb_gotomeeting_upgrade($oldversion) {
         }
 
         upgrade_mod_savepoint(true, 2017070905, 'gotomeeting');
-        return true;
     }
+    if ($oldversion < 2017070906) {
+        $table = new xmldb_table('gotomeeting');
+
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+
+         $field = new xmldb_field('gotomeeting_licence', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, 0, 'id');
+
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        upgrade_mod_savepoint(true, 2017070906, 'gotomeeting');
+    }
+    return true;
 }

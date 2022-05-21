@@ -24,6 +24,7 @@
 
 namespace mod_gotomeeting;
 
+use curl;
 
 class GotoOAuth {
 
@@ -43,7 +44,7 @@ class GotoOAuth {
     private $accesstokentime;
     private $consumerkey;
     private $consumersecret;
-
+    private $curl;
 
     public function __construct($licence_id = null) {
         global $DB;
@@ -55,17 +56,13 @@ class GotoOAuth {
             $this->refreshtoken = !empty($licence->refresh_token) ? $licence->refresh_token : null;
             $this->accesstoken = !empty($licence->access_token) ? $licence->access_token : null;
             $this->accesstokentime = !empty($licence->access_token_time) ? $licence->access_token_time : null;
-
+            $this->curl = new curl();
         }
     }
 
     public function getaccesstokenwithcode($code) {
+        global $CFG;
 
-        global $CFG, $DB;
-        $ch = curl_init();
-
-        curl_setopt($ch, CURLOPT_URL, self::BASE_URL . "/oauth/v2/token");
-        curl_setopt($ch, CURLOPT_POST, true);
         $pluginconfig = get_config(self::PLUGIN_NAME);
         $authorization = base64_encode($pluginconfig->consumer_key . ":" . $pluginconfig->consumer_secret);
         $headers = [
@@ -73,43 +70,27 @@ class GotoOAuth {
             'Accept:application/json',
             'Content-Type: application/x-www-form-urlencoded; charset=utf-8'
         ];
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        $this->curl->setHeader($headers);
 
         $redirecturl = $CFG->wwwroot . '/mod/gotomeeting/oauthCallback.php';
         $data = ['redirect_uri' => $redirecturl, 'grant_type' => 'authorization_code', 'code' => $code];
-        curl_setopt($ch, CURLOPT_POSTFIELDS, self::encode_attributes($data));
-
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-
-        curl_setopt($ch, CURLOPT_VERBOSE, true);
-        $serveroutput = curl_exec($ch);
-
-        curl_close($ch);
+        $serveroutput = $this->curl->post(self::BASE_URL . '/oauth/v2/token', self::encode_attributes($data));
 
         $response = json_decode($serveroutput);
         return $this->update_access_token($response);
     }
 
     public function getaccesstokenwithrefreshtoken($refreshtoken) {
-
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, self::BASE_URL . "/oauth/v2/token");
-        curl_setopt($ch, CURLOPT_POST, true);
         $gotowebinarconfig = get_config(self::PLUGIN_NAME);
 
         $headers = [
             'Authorization: Basic ' . base64_encode($gotowebinarconfig->consumer_key . ":" . $gotowebinarconfig->consumer_secret),
             'Content-Type: application/x-www-form-urlencoded; charset=utf-8'
         ];
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-
+        $this->curl->setHeader($headers);
         $data = ['grant_type' => 'refresh_token', 'refresh_token' => $refreshtoken];
-        curl_setopt($ch, CURLOPT_POSTFIELDS, self::encode_attributes($data));
 
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-
-        $serveroutput = curl_exec($ch);
-        curl_close($ch);
+        $serveroutput = $this->curl->post(self::BASE_URL . '/oauth/v2/token', self::encode_attributes($data));
 
         $response = json_decode($serveroutput);
 
@@ -138,120 +119,73 @@ class GotoOAuth {
 
     public function post($endpoint, $data) {
 
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, self::BASE_URL . $endpoint);
-        curl_setopt($ch, CURLOPT_POST, true);
-
         $headers = [
             'Authorization: Bearer ' . $this->getAccessToken()
         ];
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        $this->curl->setHeader($headers);
 
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
-
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-
-        $serveroutput = curl_exec($ch);
-
-        curl_close($ch);
+        $serveroutput = $this->curl->post(self::BASE_URL . $endpoint, json_encode($data));
 
         return json_decode($serveroutput);
     }
 
     public function put($endpoint, $data) {
-        global $CFG;
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, self::BASE_URL . $endpoint);
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
 
         $headers = [
             'Authorization: Bearer ' . $this->getAccessToken()
         ];
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        $this->curl->setHeader($headers);
 
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
-
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-
-        $serveroutput = curl_exec($ch);
-
-        curl_close($ch);
+        $serveroutput = $this->curl->put(self::BASE_URL . $endpoint, json_encode($data));
 
         $result = json_decode($serveroutput);
         return true;
     }
 
     public function get($endpoint) {
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, self::BASE_URL . $endpoint);
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
+
 
         $headers = [
             'Authorization: Bearer ' . $this->getAccessToken()
         ];
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $this->curl->setHeader($headers);
 
-        $serveroutput = curl_exec($ch);
-
-        curl_close($ch);
+        $serveroutput = $this->curl->get(self::BASE_URL . $endpoint);
 
         return json_decode($serveroutput);
     }
 
-    public function delete($endpoint, $data=null) {
+    public function delete($endpoint, $data = null) {
 
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, self::BASE_URL . $endpoint);
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "DELETE");
-      
 
         $headers = [
             'Authorization: Bearer ' . $this->getAccessToken()
         ];
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-        if($data){
-          curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));   
+        $this->curl->setHeader($headers);
+
+        $serveroutput = $this->curl->delete(self::BASE_URL . $endpoint, json_encode($data));
+
+        if (empty($serveroutput)) {
+            return true;
         }
-       
-
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-
-        $serveroutput = curl_exec($ch);
-
-        curl_close($ch);
-
-        $result = json_decode($serveroutput);
+        return false;
     }
 
     public function getsetupstatus() {
 
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, self::BASE_URL . "/oauth/v2/token");
-        curl_setopt($ch, CURLOPT_POST, true);
         $gotowebinarconfig = get_config(self::PLUGIN_NAME);
 
         $headers = [
             'Authorization: Basic ' . base64_encode($gotowebinarconfig->consumer_key . ":" . $gotowebinarconfig->consumer_secret),
             'Content-Type: application/x-www-form-urlencoded; charset=utf-8'
         ];
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        $this->curl->setHeader($headers);
 
         $data = ['grant_type' => 'refresh_token', 'refresh_token' => $this->refreshtoken];
-        curl_setopt($ch, CURLOPT_POSTFIELDS, self::encode_attributes($data));
 
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $serveroutput = $this->curl->post(self::BASE_URL . "/oauth/v2/token", self::encode_attributes($data));
 
-        $serveroutput = curl_exec($ch);
-        $chinfo = curl_getinfo($ch);
-        curl_close($ch);
-
-        if ($chinfo['http_code'] === 200) {
-
-            return json_decode($serveroutput);
-        }
-
-        return false;
+        return json_decode($serveroutput);
     }
 
     public static function encode_attributes($attributes) {
@@ -280,7 +214,7 @@ class GotoOAuth {
                 $gotomeeting_licence->expires_in = $response->expires_in;
                 $gotomeeting_licence->account_key = $response->account_key;
                 $gotomeeting_licence->organizer_key = $response->organizer_key;
-                $gotomeeting_licence->active =1;
+                $gotomeeting_licence->active = 1;
                 $gotomeeting_licence->timecreated = time();
                 $gotomeeting_licence->timemodified = time();
                 $gotomeeting_licence->access_token_time = time();
