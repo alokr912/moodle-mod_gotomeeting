@@ -59,7 +59,7 @@ echo $OUTPUT->header();
 echo $OUTPUT->heading('Course:  ' . $course->fullname);
 
 
-$table = get_gotomeeting_view($gotomeeting,$cm->id);
+$table = get_gotomeeting_view($gotomeeting, $cm->id);
 
 
 

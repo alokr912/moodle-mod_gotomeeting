@@ -20,8 +20,6 @@
  * @copyright 2017 Alok Kumar Rai <alokr.mail@gmail.com,alokkumarrai@outlook.in>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-
 defined('MOODLE_INTERNAL') || die();
 $string['pluginname'] = 'GoToMeeting';
 $string['modulename'] = 'GoToMeeting';
@@ -80,12 +78,10 @@ $string['license_disabled'] = 'License disabled';
 $string['enddatetimesbgtstartdatetime'] = 'End date time should be more that start date time.';
 $string['addlicence'] = 'Add new licence';
 $string['licence'] = 'Licence';
-$string['licencerequired']= 'GoToMeeting licence required.';
+$string['licencerequired'] = 'GoToMeeting licence required.';
 $string['meetingid'] = 'Meeting ID';
 $string['meeting_account'] = 'Meeting account';
 $string['account_name'] = 'Account name ';
 $string['conference_call_info'] = 'Conference call info';
-$string['report']= 'Report';
-
-
+$string['report'] = 'Report';
 
