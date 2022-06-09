@@ -27,4 +27,4 @@ $plugin->version = 2017070907;       // The current module version (Date: YYYYMM
 $plugin->requires = 2014050800;    // Requires this Moodle version.
 $plugin->component = 'mod_gotomeeting';   // Full name of the plugin (used for diagnostics).
 $plugin->maturity = MATURITY_STABLE;
-$plugin->release = 'v2.7-r0';
+$plugin->release = 'v2.7.2';

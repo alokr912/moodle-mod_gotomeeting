@@ -211,30 +211,44 @@ function get_gotomeeting_attendance_view($gotomeeting) {
 
 function get_gotomeeting_view($gotomeeting, $cmid) {
     $meetinginfo = json_decode($gotomeeting->meetinfo);
+    $context = context_module::instance($cmid);
+
     $table = new html_table();
     $head = array();
     $head[] = get_string('meetingname', 'gotomeeting');
-    $head[] = get_string('meeting_account', 'gotomeeting');
-    $head[] = get_string('meetingid', 'gotomeeting');
+    $head[] = get_string('gotomeetingintro', 'gotomeeting');
+    if(has_capability('mod/gotomeeting:addinstance', $context)){
+     $head[] = get_string('meeting_account', 'gotomeeting');
+    }
+     $head[] = get_string('meetingid', 'gotomeeting');   
     $head[] = get_string('startdatetime', 'gotomeeting');
     $head[] = get_string('enddatetime', 'gotomeeting');
 
     $head[] = get_string('conference_call_info', 'gotomeeting');
-   // $head[] = get_string('join_url', 'gotomeeting');
-    $head[] = get_string('report', 'gotomeeting');
+    if(has_capability('mod/gotomeeting:addinstance', $context)){
+       $head[] = get_string('report', 'gotomeeting'); 
+    }
+    
    
     $table->head = $head;
     $data = array();
     $data[] = $gotomeeting->name;
-    $data[] = gotomeeting_get_organiser_account_name($gotomeeting->gotomeeting_licence);
+    
+    $data[] = strip_tags( $gotomeeting->intro);
+      if(has_capability('mod/gotomeeting:addinstance', $context)){
+        $data[] = gotomeeting_get_organiser_account_name($gotomeeting->gotomeeting_licence);  
+      }
+    
     $data[] = $gotomeeting->gotomeetingid;
     $data[] = userdate($gotomeeting->startdatetime);
     $data[] = userdate($gotomeeting->enddatetime);
     $data[] = $meetinginfo->conferenceCallInfo;
-
-     $report_link = new moodle_url('attendance.php', array('id' => $cmid));
+ if(has_capability('mod/gotomeeting:addinstance', $context)){
+   $report_link = new moodle_url('attendance.php', array('id' => $cmid));
     $data[] = html_writer::link($report_link, get_string('report', 'gotomeeting'));
-    
+        
+ }
+   
     $table->data[] = $data;
     
     $cell2 = new html_table_cell(html_writer::link(trim(get_gotomeeting($gotomeeting), '"'), get_string('join_url', 'gotomeeting'), array("target" => "_blank", 'class' => 'btn btn-primary')));

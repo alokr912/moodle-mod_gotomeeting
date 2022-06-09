@@ -58,55 +58,6 @@ $completion->set_module_viewed($cm);
 echo $OUTPUT->header();
 echo $OUTPUT->heading('Course:  ' . $course->fullname);
 
-$table = new html_table();
-$table->head = array('GoToMeeting');
-$table->headspan = array(2);
-$table->size = array('30%', '70%');
-
-$cell1 = new html_table_cell("Meeting Title");
-$cell1->colspan = 1;
-$cell1->style = 'text-align:left;';
-
-$cell2 = new html_table_cell("<b>" . $gotomeeting->name . "</b>");
-$cell2->colspan = 1;
-$cell2->style = 'text-align:left;';
-$table->data[] = array($cell1, $cell2);
-
-$cell1 = new html_table_cell("Meeting Description");
-$cell1->colspan = 1;
-$cell1->style = 'text-align:left;';
-
-$cell2 = new html_table_cell("<b>" . strip_tags($gotomeeting->intro) . "</b>");
-$cell2->colspan = 1;
-$cell2->style = 'text-align:left;';
-
-$table->data[] = array($cell1, $cell2);
-
-$cell1 = new html_table_cell("Meeting start date and time");
-$cell1->colspan = 1;
-$cell1->style = 'text-align:left;';
-
-$cell2 = new html_table_cell("<b>" . userdate($gotomeeting->startdatetime) . "</b>");
-$cell2->colspan = 1;
-$cell2->style = 'text-align:left;';
-
-$table->data[] = array($cell1, $cell2);
-
-$cell1 = new html_table_cell("Meeting end date and time");
-$cell1->colspan = 1;
-$cell1->style = 'text-align:left;';
-
-$cell2 = new html_table_cell("<b>" . userdate($gotomeeting->enddatetime) . "</b>");
-$cell2->colspan = 1;
-$cell2->style = 'text-align:left;';
-
-$table->data[] = array($cell1, $cell2);
-$link = html_writer::link(trim($joinurl, '"'), 'Join Meeting', array("target" => "_blank", 'class' => 'btn btn-primary'));
-$cell2 = new html_table_cell($link);
-$cell2->colspan = 2;
-$cell2->style = 'text-align:center;';
-
-$table->data[] = array($cell2);
 
 $table = get_gotomeeting_view($gotomeeting,$cm->id);
 

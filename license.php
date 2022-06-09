@@ -1,5 +1,4 @@
 <?php
-
 /**
  * GoToWebinar module view file
  *
@@ -10,14 +9,13 @@
 require('../../config.php');
 require_once($CFG->dirroot . '/mod/gotomeeting/locallib.php');
 
-
 global $DB, $USER;
 $id = required_param('id', PARAM_INT); // Course Module ID
 $action = optional_param('action', 'list', PARAM_TEXT);
 $sesskey = optional_param('sesskey', '', PARAM_RAW);
 require_login();
 if (!is_siteadmin()) {
-    print_error('nopermissions', 'gotomeeting');
+    throw new moodle_exception('nopermissions');
 }
 $gotomeeting_licence = $DB->get_record('gotomeeting_licence', array('id' => $id), '*', MUST_EXIST);
 $enabled = false;

@@ -73,18 +73,18 @@ $string['setup_title'] = 'GoToMeeting config test report';
 $string['setup_config_validation'] = 'GoToMeeting config validation ';
 $string['setup_key_missing'] = 'GoToMeeting consumer key missing';
 $string['setup_secret_missing'] = 'GoToMeeting consumer secert missing';
-$string['license_title'] = 'GoToMeeting License';
-$string['license_heading'] = 'GoToMeeting License';
+$string['license_title'] = 'GoToMeeting license';
+$string['license_heading'] = 'GoToMeeting license';
 $string['license_enabled'] = 'License enabled';
 $string['license_disabled'] = 'License disabled';
-$string['enddatetimesbgtstartdatetime'] = 'End date time should be more that Start date time.';
+$string['enddatetimesbgtstartdatetime'] = 'End date time should be more that start date time.';
 $string['addlicence'] = 'Add new licence';
 $string['licence'] = 'Licence';
-$string['licencerequired']= 'GoToMeeting Licence required.';
+$string['licencerequired']= 'GoToMeeting licence required.';
 $string['meetingid'] = 'Meeting ID';
-$string['meeting_account'] = 'Meeting Account';
-$string['account_name'] = 'Account Name ';
-$string['conference_call_info'] = 'Conference Call Info';
+$string['meeting_account'] = 'Meeting account';
+$string['account_name'] = 'Account name ';
+$string['conference_call_info'] = 'Conference call info';
 $string['report']= 'Report';
 
 
