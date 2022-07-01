@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of the GoToMeeting plugin for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -148,18 +147,17 @@ function get_gotomeeting_attendance($gotomeeting) {
     $rows = array();
     foreach ($response as $attendance) {
 
-        $joinTime = strtotime($attendance->joinTime);
-        $leaveTime = strtotime($attendance->leaveTime);
-        $differenceInSeconds = $leaveTime - $joinTime;
+        $jointime = strtotime($attendance->joinTime);
+        $leavetime = strtotime($attendance->leaveTime);
+        $differenceinseconds = $leavetime - $jointime;
 
-        $attendance_percentage = 0;
-        if ($differenceInSeconds) {
-            $attendance_percentage = number_format(($attendance->duration * 60 * 100) / $duration, 2);
+        $attendancepercentage = 0;
+        if ($differenceinseconds) {
+            $attendancepercentage = number_format(($attendance->duration * 60 * 100) / $duration, 2);
         }
 
-        $rows[] = array($attendance->attendeeName, $attendance->joinTime, $attendance->leaveTime, $attendance_percentage);
+        $rows[] = array($attendance->attendeeName, $attendance->joinTime, $attendance->leaveTime, $attendancepercentage);
     }
-
 
     $table->data = $rows;
 
@@ -184,18 +182,17 @@ function get_gotomeeting_attendance_view($gotomeeting) {
     $rows = array();
     foreach ($response as $attendance) {
 
-        $joinTime = strtotime($attendance->joinTime);
-        $leaveTime = strtotime($attendance->leaveTime);
-        $differenceInSeconds = $leaveTime - $joinTime;
+        $jointime = strtotime($attendance->joinTime);
+        $leavetime = strtotime($attendance->leaveTime);
+        $differenceinseconds = $jointime - $leavetime;
 
-        $attendance_percentage = 0;
-        if ($differenceInSeconds) {
-            $attendance_percentage = number_format(($duration * 10 / $differenceInSeconds) * 10, 2);
+        $attendancepercentage = 0;
+        if ($differenceinseconds) {
+            $attendancepercentage = number_format(($duration * 10 / $differenceinseconds) * 10, 2);
         }
 
-        $rows[] = array($attendance->attendeeName, $attendance->joinTime, $attendance->leaveTime, $attendance_percentage);
+        $rows[] = array($attendance->attendeeName, $attendance->joinTime, $attendance->leaveTime, $differenceinseconds);
     }
-
 
     $table->data = $rows;
 
@@ -222,7 +219,6 @@ function get_gotomeeting_view($gotomeeting, $cmid) {
         $head[] = get_string('report', 'gotomeeting');
     }
 
-
     $table->head = $head;
     $data = array();
     $data[] = $gotomeeting->name;
@@ -237,13 +233,14 @@ function get_gotomeeting_view($gotomeeting, $cmid) {
     $data[] = userdate($gotomeeting->enddatetime);
     $data[] = $meetinginfo->conferenceCallInfo;
     if (has_capability('mod/gotomeeting:addinstance', $context)) {
-        $report_link = new moodle_url('attendance.php', array('id' => $cmid));
-        $data[] = html_writer::link($report_link, get_string('report', 'gotomeeting'));
+        $reportlink = new moodle_url('attendance.php', array('id' => $cmid));
+        $data[] = html_writer::link($reportlink, get_string('report', 'gotomeeting'));
     }
 
     $table->data[] = $data;
 
-    $cell2 = new html_table_cell(html_writer::link(trim(get_gotomeeting($gotomeeting), '"'), get_string('join_url', 'gotomeeting'), array("target" => "_blank", 'class' => 'btn btn-primary')));
+    $cell2 = new html_table_cell(html_writer::link(trim(get_gotomeeting($gotomeeting), '"'),
+            get_string('join_url', 'gotomeeting'), array("target" => "_blank", 'class' => 'btn btn-primary')));
     $cell2->colspan = 7;
     $cell2->style = 'text-align:center;';
     $table->data[] = array($cell2);

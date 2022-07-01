@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of the GoToMeeting plugin for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -46,10 +45,10 @@ class GotoOAuth {
     private $consumersecret;
     private $curl;
 
-    public function __construct($licence_id = null) {
+    public function __construct($licenceid = null) {
         global $DB;
 
-        $licence = $DB->get_record('gotomeeting_licence', array('id' => $licence_id));
+        $licence = $DB->get_record('gotomeeting_licence', array('id' => $licenceid));
 
         if ($licence) {
             $this->organizerkey = !empty($licence->organizer_key) ? $licence->organizer_key : null;
@@ -144,7 +143,6 @@ class GotoOAuth {
 
     public function get($endpoint) {
 
-
         $headers = [
             'Authorization: Bearer ' . $this->getAccessToken()
         ];
@@ -156,7 +154,6 @@ class GotoOAuth {
     }
 
     public function delete($endpoint, $data = null) {
-
 
         $headers = [
             'Authorization: Bearer ' . $this->getAccessToken()
@@ -201,31 +198,31 @@ class GotoOAuth {
         global $DB;
         if (isset($response) && isset($response->access_token) && isset($response->refresh_token) &&
                 isset($response->organizer_key) && isset($response->account_key)) {
-            $gotomeeting_licence = $DB->get_record('gotomeeting_licence', array('organizer_key' => $response->organizer_key));
+            $gotomeetinglicence = $DB->get_record('gotomeeting_licence', array('organizer_key' => $response->organizer_key));
 
-            if (!$gotomeeting_licence) {
-                $gotomeeting_licence = new \stdClass();
-                $gotomeeting_licence->email = $response->email;
-                $gotomeeting_licence->first_name = $response->firstName;
-                $gotomeeting_licence->last_name = $response->lastName;
-                $gotomeeting_licence->access_token = $response->access_token;
-                $gotomeeting_licence->refresh_token = $response->refresh_token;
-                $gotomeeting_licence->token_type = $response->token_type;
-                $gotomeeting_licence->expires_in = $response->expires_in;
-                $gotomeeting_licence->account_key = $response->account_key;
-                $gotomeeting_licence->organizer_key = $response->organizer_key;
-                $gotomeeting_licence->active = 1;
-                $gotomeeting_licence->timecreated = time();
-                $gotomeeting_licence->timemodified = time();
-                $gotomeeting_licence->access_token_time = time();
-                $DB->insert_record('gotomeeting_licence', $gotomeeting_licence);
+            if (!$gotomeetinglicence) {
+                $gotomeetinglicence = new \stdClass();
+                $gotomeetinglicence->email = $response->email;
+                $gotomeetinglicence->first_name = $response->firstName;
+                $gotomeetinglicence->last_name = $response->lastName;
+                $gotomeetinglicence->access_token = $response->access_token;
+                $gotomeetinglicence->refresh_token = $response->refresh_token;
+                $gotomeetinglicence->token_type = $response->token_type;
+                $gotomeetinglicence->expires_in = $response->expires_in;
+                $gotomeetinglicence->account_key = $response->account_key;
+                $gotomeetinglicence->organizer_key = $response->organizer_key;
+                $gotomeetinglicence->active = 1;
+                $gotomeetinglicence->timecreated = time();
+                $gotomeetinglicence->timemodified = time();
+                $gotomeetinglicence->access_token_time = time();
+                $DB->insert_record('gotomeeting_licence', $gotomeetinglicence);
             } else {
-                $gotomeeting_licence->access_token = $response->access_token;
-                $gotomeeting_licence->refresh_token = $response->refresh_token;
-                $gotomeeting_licence->timemodified = time();
-                $gotomeeting_licence->access_token_time = time();
+                $gotomeetinglicence->access_token = $response->access_token;
+                $gotomeetinglicence->refresh_token = $response->refresh_token;
+                $gotomeetinglicence->timemodified = time();
+                $gotomeetinglicence->access_token_time = time();
 
-                $DB->update_record('gotomeeting_licence', $gotomeeting_licence);
+                $DB->update_record('gotomeeting_licence', $gotomeetinglicence);
             }
 
             return true;
