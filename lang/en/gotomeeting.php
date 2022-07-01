@@ -40,14 +40,9 @@ $string['generalsetting'] = 'General setting';
 $string['meetingname'] = 'Title';
 $string['meetingheader'] = 'GoToMeeting setting ';
 $string['gotomeetingintro'] = 'Description';
-
 $string['startdatetime'] = 'Start date & time';
 $string['enddatetime'] = 'End date & time';
-
 $string['join_url'] = 'Join URL';
-$string['startdatetime'] = 'Start Date & Time';
-$string['enddatetime'] = 'End Date & Time';
-
 $string['invalidstartdatetime'] = 'Start date and time must be a future value';
 $string['invalidenddatetime'] = 'End date and time must be a future value';
 $string['enddatetimegtsdt'] = 'End date and time should be more than start date and time';
@@ -81,7 +76,7 @@ $string['licence'] = 'Licence';
 $string['licencerequired'] = 'GoToMeeting licence required.';
 $string['meetingid'] = 'Meeting ID';
 $string['meeting_account'] = 'Meeting account';
-$string['account_name'] = 'Account name ';
+$string['account_name'] = 'Account name';
 $string['conference_call_info'] = 'Conference call info';
 $string['report'] = 'Report';
 

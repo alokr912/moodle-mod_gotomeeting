@@ -56,7 +56,7 @@ $PAGE->set_heading($course->fullname);
 $completion = new completion_info($course);
 $completion->set_module_viewed($cm);
 echo $OUTPUT->header();
-echo $OUTPUT->heading('Course:  ' . $course->fullname);
+echo $OUTPUT->heading(get_string('course') . ' : ' . $course->fullname);
 
 
 $table = get_gotomeeting_view($gotomeeting, $cm->id);
