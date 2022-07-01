@@ -44,7 +44,7 @@ function gotomeeting_get_coursemodule_info($coursemodule) {
 }
 
 /**
-  * @global type $USER
+ * @global type $USER
  * @global type $DB
  * @param type $data
  * @param type $mform
@@ -106,20 +106,44 @@ function gotomeeting_add_instance($data, $mform = null) {
  */
 function gotomeeting_supports($feature) {
     switch ($feature) {
-        case FEATURE_MOD_ARCHETYPE: return MOD_ARCHETYPE_RESOURCE;
-        case FEATURE_GROUPS: return false;
-        case FEATURE_GROUPINGS: return false;
-        case FEATURE_GROUPMEMBERSONLY: return false;
-        case FEATURE_MOD_INTRO: return true;
-        case FEATURE_COMPLETION_TRACKS_VIEWS: return true;
-        case FEATURE_GRADE_HAS_GRADE: return false;
-        case FEATURE_GRADE_OUTCOMES: return false;
-        case FEATURE_BACKUP_MOODLE2: return true;
-        case FEATURE_SHOW_DESCRIPTION: return true;
-        case FEATURE_COMPLETION_HAS_RULES: return false;
-
-        default: return null;
+        case FEATURE_MOD_ARCHETYPE: {
+                return MOD_ARCHETYPE_RESOURCE;
+        }
+        case FEATURE_GROUPS: {
+                return false;
+        }
+        case FEATURE_GROUPINGS:{
+            return false;
+        }
+        case FEATURE_GROUPMEMBERSONLY:{
+            return false;
+        }
+        case FEATURE_MOD_INTRO:{
+            return true;
+        }
+        case FEATURE_COMPLETION_TRACKS_VIEWS:{
+            return true;
+        }
+        case FEATURE_GRADE_HAS_GRADE:{
+            return false;
+        }
+        case FEATURE_GRADE_OUTCOMES:{
+            return false;
+        }
+        case FEATURE_BACKUP_MOODLE2:{
+            return true;
+        }
+        case FEATURE_SHOW_DESCRIPTION:{
+            return true;
+        }
+        case FEATURE_COMPLETION_HAS_RULES:{
+            return false;
+        }
+        default:{
+            return null;
+        }
     }
+
 }
 
 /**

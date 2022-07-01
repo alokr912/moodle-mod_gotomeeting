@@ -142,7 +142,8 @@ function get_gotomeeting_attendance($gotomeeting) {
 
     $table = new html_table();
 
-    $table->head = array('Attendee', 'Join time', 'Leave time', 'Completed Percentage');
+    $table->head = array(get_string('attendee', 'gotomeeting'), get_string('jointime', 'gotomeeting'),
+        get_string('leavetime', 'gotomeeting'), get_string('completedpercentage', 'gotomeeting'));
 
     $rows = array();
     foreach ($response as $attendance) {
@@ -177,7 +178,8 @@ function get_gotomeeting_attendance_view($gotomeeting) {
 
     $table = new html_table();
 
-    $table->head = array('Attendee', 'Join time', 'Leave time', 'Completed Percentage');
+    $table->head = array(get_string('attendee', 'gotomeeting'), get_string('jointime', 'gotomeeting'),
+        get_string('leavetime', 'gotomeeting'), get_string('completedpercentage', 'gotomeeting'));
 
     $rows = array();
     foreach ($response as $attendance) {
