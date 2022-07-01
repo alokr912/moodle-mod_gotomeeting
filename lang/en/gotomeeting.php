@@ -79,4 +79,9 @@ $string['meeting_account'] = 'Meeting account';
 $string['account_name'] = 'Account name';
 $string['conference_call_info'] = 'Conference call info';
 $string['report'] = 'Report';
+$string['gotomeeting:addinstance']='Add a new GoToMeeting';
+$string['gotomeeting:view']='View GoToMeeting';
+$string['gotomeeting:presenter']='Join GoToMeeting as presenter';
+$string['gotomeeting:organiser']='Join GoToMeeting as organiser';
+$string['']='';
 
