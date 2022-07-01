@@ -1,4 +1,5 @@
 <?php
+
 // This file is part of the GoToMeeting plugin for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -32,7 +33,7 @@ function creategotomeeting($gotomeeting) {
     $gotooauth = new mod_gotomeeting\GoToOAuth($gotomeeting->licence);
 
     if (!isset($gotooauth->organizerkey) || empty($gotooauth->organizerkey)) {
-        print_error("Incomplete GoToMeeting setup");
+        throw new moodle_exception('incompletesetup', 'gotomeeting');
     }
 
     $attributes = array();
@@ -65,7 +66,7 @@ function updategotomeeting($oldgotomeeting, $gotomeeting) {
     $gotooauth = new mod_gotomeeting\GoToOAuth($oldgotomeeting->gotomeeting_licence);
 
     if (!isset($gotooauth->organizerkey) || empty($gotooauth->organizerkey)) {
-        print_error("Incomplete GoToMeeting setup");
+        throw new moodle_exception('incompletesetup', 'gotomeeting');
     }
     $attributes = array();
     $attributes['subject'] = $gotomeeting->name;
@@ -90,12 +91,11 @@ function updategotomeeting($oldgotomeeting, $gotomeeting) {
     return $result;
 }
 
-function deletegotomeeting($gotowebinarid, $gotomeeting_licence) {
+function deletegotomeeting($gotowebinarid, $gotomeetinglicence) {
 
-
-    $gotooauth = new mod_gotomeeting\GoToOAuth($gotomeeting_licence);
+    $gotooauth = new mod_gotomeeting\GoToOAuth($gotomeetinglicence);
     if (!isset($gotooauth->organizerkey) || empty($gotooauth->organizerkey)) {
-        print_error("Incomplete GoToMeeting setup");
+        throw new moodle_exception('incompletesetup', 'gotomeeting');
     }
 
     $responce = $gotooauth->delete("/G2M/rest/meetings/{$gotowebinarid}");
@@ -108,10 +108,9 @@ function deletegotomeeting($gotowebinarid, $gotomeeting_licence) {
 
 function get_gotomeeting($gotomeeting) {
 
-
     $gotooauth = new mod_gotomeeting\GoToOAuth($gotomeeting->gotomeeting_licence);
     if (!isset($gotooauth->organizerkey) || empty($gotooauth->organizerkey)) {
-        print_error("Incomplete GoToMeeting setup");
+        throw new moodle_exception('incompletesetup', 'gotomeeting');
     }
     $context = context_course::instance($gotomeeting->course);
     if (is_siteadmin() OR has_capability('mod/gotomeeting:organiser', $context) OR
@@ -132,7 +131,7 @@ function get_gotomeeting_attendance($gotomeeting) {
 
     $gotooauth = new mod_gotomeeting\GoToOAuth($gotomeeting->gotomeeting_licence);
     if (!isset($gotooauth->organizerkey) || empty($gotooauth->organizerkey)) {
-        print_error("Incomplete GoToMeeting setup");
+        throw new moodle_exception('incompletesetup', 'gotomeeting');
     }
 
     $response = $gotooauth->get("/G2M/rest/meetings/{$gotomeeting->gotomeetingid}/attendees");
@@ -148,7 +147,6 @@ function get_gotomeeting_attendance($gotomeeting) {
 
     $rows = array();
     foreach ($response as $attendance) {
-
 
         $joinTime = strtotime($attendance->joinTime);
         $leaveTime = strtotime($attendance->leaveTime);
@@ -172,7 +170,7 @@ function get_gotomeeting_attendance_view($gotomeeting) {
 
     $gotooauth = new mod_gotomeeting\GoToOAuth($gotomeeting->gotomeeting_licence);
     if (!isset($gotooauth->organizerkey) || empty($gotooauth->organizerkey)) {
-        print_error("Incomplete GoToMeeting setup");
+        throw new moodle_exception('incompletesetup', 'gotomeeting');
     }
 
     $response = $gotooauth->get("/G2M/rest/meetings/{$gotomeeting->gotomeetingid}/attendees");

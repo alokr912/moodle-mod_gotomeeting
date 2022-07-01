@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of the GoToMeeting plugin for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -28,7 +27,6 @@ require_once($CFG->dirroot . '/calendar/lib.php');
 require_once($CFG->libdir . '/filelib.php');
 
 /**
- * 
  * @global type $DB
  * @param type $coursemodule
  * @return \cached_cm_info
@@ -46,8 +44,7 @@ function gotomeeting_get_coursemodule_info($coursemodule) {
 }
 
 /**
- * 
- * @global type $USER
+  * @global type $USER
  * @global type $DB
  * @param type $data
  * @param type $mform
@@ -231,7 +228,6 @@ function gotomeeting_delete_instance($id) {
 }
 
 /**
- * 
  * @global type $CFG
  * @global type $DB
  * @param type $course
@@ -251,7 +247,6 @@ function gotomeeting_get_completion_state($course, $cm, $userid, $type) {
 }
 
 /**
- * 
  * @global type $DB
  * @param type $licence
  * @return type
@@ -259,8 +254,8 @@ function gotomeeting_get_completion_state($course, $cm, $userid, $type) {
 function gotomeeting_get_organiser_account_name($licence) {
     global $DB;
 
-    if ($gotomeeting_licence = $DB->get_record('gotomeeting_licence', array('id' => $licence))) {
-        return explode('@', $gotomeeting_licence->email)[0];
+    if ($gotomeetinglicence = $DB->get_record('gotomeeting_licence', array('id' => $licence))) {
+        return explode('@', $gotomeetinglicence->email)[0];
     }
     return null;
 }
