@@ -23,7 +23,7 @@
 
 namespace mod_gotomeeting\event;
 
-defined('MOODLE_INTERNAL') || die();
+
 
 class gotomeeting_updated extends \core\event\base {
 

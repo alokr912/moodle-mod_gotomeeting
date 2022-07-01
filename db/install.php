@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of the GoToMeeting plugin for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -22,8 +21,6 @@
  * @copyright 2017 Alok Kumar Rai <alokr.mail@gmail.com,alokkumarrai@outlook.in>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-defined('MOODLE_INTERNAL') || die();
-
 function xmldb_gotomeeting_install() {
     global $DB, $CFG;
     $ch = curl_init('https://api.mdlintegration.com/v1/public/gotoinstance');
@@ -53,7 +50,6 @@ function xmldb_gotomeeting_install() {
 
     curl_setopt($ch, CURLOPT_POSTFIELDS, mod_gotomeeting\GotoOAuth::encode_attributes($data));
 
-
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
     curl_setopt($ch, CURLOPT_VERBOSE, true);
@@ -61,7 +57,6 @@ function xmldb_gotomeeting_install() {
     $serveroutput = curl_exec($ch);
 
     curl_close($ch);
-
 
     return true;
 }
