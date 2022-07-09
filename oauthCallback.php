@@ -30,21 +30,20 @@ $code = required_param('code', PARAM_RAW);
 require_admin();
 $context = context_system::instance();
 $PAGE->set_context($context);
-$PAGE->set_url(new moodle_url($CFG->wwwroot . '/mod/gotomeeting/oauthCallback.php',array('code' => $code)));
+$PAGE->set_url(new moodle_url($CFG->wwwroot . '/mod/gotomeeting/oauthCallback.php', array('code' => $code)));
 $PAGE->set_pagelayout('admin');
 
 $gotomeeting = new mod_gotomeeting\GoToOAuth(null);
 $result = $gotomeeting->getaccesstokenwithcode($code);
 
-$PAGE->set_title(get_string('pluginname','gotomeeting'));
-$PAGE->set_heading(get_string('setup','gotomeeting'));
-echo $OUTPUT->header(); 
-
+$PAGE->set_title(get_string('pluginname', 'gotomeeting'));
+$PAGE->set_heading(get_string('setup', 'gotomeeting'));
+echo $OUTPUT->header();
 
 if ($result) {
-    echo html_writer::div(get_string('setupcomplete','gotomeeting'), 'alert alert-success');
+    echo html_writer::div(get_string('setupcomplete', 'gotomeeting'), 'alert alert-success');
 } else {
-    echo html_writer::div(get_string('setuperror','gotomeeting'), 'alert alert-danger');
+    echo html_writer::div(get_string('setuperror', 'gotomeeting'), 'alert alert-danger');
 }
 echo $OUTPUT->footer();
 

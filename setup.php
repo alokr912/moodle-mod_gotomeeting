@@ -37,7 +37,7 @@ if (!is_siteadmin()) {
 $gotomeetingconfig = get_config(mod_gotomeeting\GoToOAuth::PLUGIN_NAME);
 
 $gotoauth = new mod_gotomeeting\GoToOAuth(null);
- if (!empty($gotomeetingconfig->consumer_key) && !empty($gotomeetingconfig->consumer_secret)) {
+if (!empty($gotomeetingconfig->consumer_key) && !empty($gotomeetingconfig->consumer_secret)) {
     $consumerkey = trim($gotomeetingconfig->consumer_key);
     $redirecturl = $CFG->wwwroot . '/mod/gotomeeting/oauthCallback.php';
     $url = mod_gotomeeting\GoToOAuth::BASE_URL . "/oauth/v2/authorize?client_id="
