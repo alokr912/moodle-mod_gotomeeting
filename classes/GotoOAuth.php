@@ -22,7 +22,7 @@
  */
 
 namespace mod_gotomeeting;
-
+require_once($CFG->libdir . '/filelib.php');
 use curl;
 
 class GotoOAuth {
@@ -47,7 +47,7 @@ class GotoOAuth {
 
     public function __construct($licenceid = null) {
         global $DB;
-
+         $this->curl = new curl();
         $licence = $DB->get_record('gotomeeting_licence', array('id' => $licenceid));
 
         if ($licence) {
@@ -55,7 +55,7 @@ class GotoOAuth {
             $this->refreshtoken = !empty($licence->refresh_token) ? $licence->refresh_token : null;
             $this->accesstoken = !empty($licence->access_token) ? $licence->access_token : null;
             $this->accesstokentime = !empty($licence->access_token_time) ? $licence->access_token_time : null;
-            $this->curl = new curl();
+           
         }
     }
 
@@ -74,23 +74,25 @@ class GotoOAuth {
         $redirecturl = $CFG->wwwroot . '/mod/gotomeeting/oauthCallback.php';
         $data = ['redirect_uri' => $redirecturl, 'grant_type' => 'authorization_code', 'code' => $code];
         $serveroutput = $this->curl->post(self::BASE_URL . '/oauth/v2/token', self::encode_attributes($data));
-
+    
         $response = json_decode($serveroutput);
         return $this->update_access_token($response);
     }
 
     public function getaccesstokenwithrefreshtoken($refreshtoken) {
         $gotowebinarconfig = get_config(self::PLUGIN_NAME);
-
+       
         $headers = [
             'Authorization: Basic ' . base64_encode($gotowebinarconfig->consumer_key . ":" . $gotowebinarconfig->consumer_secret),
             'Content-Type: application/x-www-form-urlencoded; charset=utf-8'
         ];
+        
         $this->curl->setHeader($headers);
         $data = ['grant_type' => 'refresh_token', 'refresh_token' => $refreshtoken];
-
+       
+        
         $serveroutput = $this->curl->post(self::BASE_URL . '/oauth/v2/token', self::encode_attributes($data));
-
+       
         $response = json_decode($serveroutput);
 
         if (isset($response) && isset($response->access_token) && isset($response->refresh_token) &&
@@ -107,9 +109,9 @@ class GotoOAuth {
     }
 
     public function getaccesstoken() {
-
-        if (isset($this->access_token_time) && !empty($this->access_token_time) &&
-                $this->access_token_time + self::EXPIRY_TIME_IN_SECOND > time()) {
+        
+        if (isset($this->accesstokentime) && !empty($this->accesstokentime) &&
+                $this->accesstokentime + self::EXPIRY_TIME_IN_SECOND > time()) {
             return $this->accesstoken;
         } else {
             return $this->getaccesstokenwithrefreshtoken($this->refreshtoken);
@@ -121,10 +123,11 @@ class GotoOAuth {
         $headers = [
             'Authorization: Bearer ' . $this->getAccessToken()
         ];
+       
         $this->curl->setHeader($headers);
 
         $serveroutput = $this->curl->post(self::BASE_URL . $endpoint, json_encode($data));
-
+       
         return json_decode($serveroutput);
     }
 

@@ -87,5 +87,8 @@ $string['attendee'] = 'Attendee';
 $string['jointime'] = 'Join time';
 $string['leavetime'] = 'Leave time';
 $string['completedpercentage'] = 'Completed percentage';
+$string['setupcomplete'] = 'GoToMeeting setup is complete';
+$string['setuperror'] = 'Unable to complete setup, kindly raise an issue  at https://github.com/alokr912/moodle-mod_gotomeeting/issues';
+$string['setup'] = 'Setting up new GoToMeeting license';
 $string[''] = '';
 

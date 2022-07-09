@@ -37,19 +37,7 @@ if (!is_siteadmin()) {
 $gotomeetingconfig = get_config(mod_gotomeeting\GoToOAuth::PLUGIN_NAME);
 
 $gotoauth = new mod_gotomeeting\GoToOAuth(null);
-$status = $gotoauth->getSetupStatus();
-
-if ($status) {
-    echo $OUTPUT->header();
-    echo html_writer::div(get_string('setup_status', 'gotomeeting'), 'alert alert-info');
-    echo html_writer::div(get_string('setup_status', 'gotomeeting', $status->email), 'alert alert-success');
-    echo html_writer::div(get_string('setup_firstname', 'gotomeeting', $status->firstName), 'alert alert-success');
-    echo html_writer::div(get_string('setup_lastname', 'gotomeeting', $status->lastName), 'alert alert-success');
-    echo html_writer::div(get_string('setup_okey', 'gotomeeting', $status->organizer_key), 'alert alert-success');
-    echo html_writer::div(get_string('setup_akey', 'gotomeeting', $status->account_key), 'alert alert-success');
-
-    echo $OUTPUT->footer();
-} else if (!empty($gotomeetingconfig->consumer_key) && !empty($gotomeetingconfig->consumer_secret)) {
+ if (!empty($gotomeetingconfig->consumer_key) && !empty($gotomeetingconfig->consumer_secret)) {
     $consumerkey = trim($gotomeetingconfig->consumer_key);
     $redirecturl = $CFG->wwwroot . '/mod/gotomeeting/oauthCallback.php';
     $url = mod_gotomeeting\GoToOAuth::BASE_URL . "/oauth/v2/authorize?client_id="
