@@ -27,7 +27,7 @@ require_once($CFG->dirroot . '/calendar/lib.php');
 require_once($CFG->libdir . '/filelib.php');
 
 /**
- * @global type $DB
+ * Provide a customized course module info
  * @param type $coursemodule
  * @return \cached_cm_info
  */
@@ -44,6 +44,7 @@ function gotomeeting_get_coursemodule_info($coursemodule) {
 }
 
 /**
+ * Add a new module instance
  * @global type $USER
  * @global type $DB
  * @param type $data
@@ -94,6 +95,7 @@ function gotomeeting_add_instance($data, $mform = null) {
 }
 
 /**
+ * List of features supported in Resource module
  * @uses FEATURE_GROUPS
  * @uses FEATURE_GROUPINGS
  * @uses FEATURE_GROUPMEMBERSONLY
@@ -108,42 +110,41 @@ function gotomeeting_supports($feature) {
     switch ($feature) {
         case FEATURE_MOD_ARCHETYPE: {
                 return MOD_ARCHETYPE_RESOURCE;
-        }
+            }
         case FEATURE_GROUPS: {
                 return false;
-        }
-        case FEATURE_GROUPINGS:{
-            return false;
-        }
-        case FEATURE_GROUPMEMBERSONLY:{
-            return false;
-        }
-        case FEATURE_MOD_INTRO:{
-            return true;
-        }
-        case FEATURE_COMPLETION_TRACKS_VIEWS:{
-            return true;
-        }
-        case FEATURE_GRADE_HAS_GRADE:{
-            return false;
-        }
-        case FEATURE_GRADE_OUTCOMES:{
-            return false;
-        }
-        case FEATURE_BACKUP_MOODLE2:{
-            return true;
-        }
-        case FEATURE_SHOW_DESCRIPTION:{
-            return true;
-        }
-        case FEATURE_COMPLETION_HAS_RULES:{
-            return false;
-        }
-        default:{
-            return null;
-        }
+            }
+        case FEATURE_GROUPINGS: {
+                return false;
+            }
+        case FEATURE_GROUPMEMBERSONLY: {
+                return false;
+            }
+        case FEATURE_MOD_INTRO: {
+                return true;
+            }
+        case FEATURE_COMPLETION_TRACKS_VIEWS: {
+                return true;
+            }
+        case FEATURE_GRADE_HAS_GRADE: {
+                return false;
+            }
+        case FEATURE_GRADE_OUTCOMES: {
+                return false;
+            }
+        case FEATURE_BACKUP_MOODLE2: {
+                return true;
+            }
+        case FEATURE_SHOW_DESCRIPTION: {
+                return true;
+            }
+        case FEATURE_COMPLETION_HAS_RULES: {
+                return false;
+            }
+        default: {
+                return null;
+            }
     }
-
 }
 
 /**
@@ -213,7 +214,7 @@ function gotomeeting_update_instance($gotomeeting) {
  * @return boolean Success/Fail
  */
 function gotomeeting_delete_instance($id) {
-    global $DB, $CFG;
+    global $DB;
 
     $result = false;
     if (!$gotomeeting = $DB->get_record('gotomeeting', array('id' => $id))) {
@@ -252,8 +253,7 @@ function gotomeeting_delete_instance($id) {
 }
 
 /**
- * @global type $CFG
- * @global type $DB
+ * 
  * @param type $course
  * @param type $cm
  * @param type $userid
@@ -262,8 +262,7 @@ function gotomeeting_delete_instance($id) {
  * @throws Exception
  */
 function gotomeeting_get_completion_state($course, $cm, $userid, $type) {
-    global $CFG, $DB;
-    $result = $type;
+    global $DB;
     if (!($gotomeeting = $DB->get_record('gotomeeting', array('id' => $cm->instance)))) {
         throw new Exception("Can't find GoToLMS {$cm->instance}");
     }
@@ -271,7 +270,7 @@ function gotomeeting_get_completion_state($course, $cm, $userid, $type) {
 }
 
 /**
- * @global type $DB
+ * Provide list of active license in the system.
  * @param type $licence
  * @return type
  */
