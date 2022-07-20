@@ -22,12 +22,16 @@
  */
 defined('MOODLE_INTERNAL') || die;
 require_once($CFG->dirroot . '/mod/gotomeeting/classes/GotoOAuth.php');
-/*
+
+/**
+ * 
+ * @global type $DB
+ * @param type $gotomeeting
+ * @return boolean
  * @throws moodle_exception
  */
-
 function creategotomeeting($gotomeeting) {
-    global $USER, $DB, $CFG;
+    global $DB;
 
     $gotooauth = new mod_gotomeeting\GoToOAuth($gotomeeting->licence);
 
@@ -57,8 +61,16 @@ function creategotomeeting($gotomeeting) {
     return false;
 }
 
+/**
+ * 
+ * @global type $DB
+ * @param type $oldgotomeeting
+ * @param type $gotomeeting
+ * @return boolean
+ * @throws moodle_exception
+ */
 function updategotomeeting($oldgotomeeting, $gotomeeting) {
-    global $USER, $DB, $CFG;
+    global $DB;
 
     $result = false;
 
@@ -90,6 +102,13 @@ function updategotomeeting($oldgotomeeting, $gotomeeting) {
     return $result;
 }
 
+/**
+ * 
+ * @param type $gotowebinarid
+ * @param type $gotomeetinglicence
+ * @return boolean
+ * @throws moodle_exception
+ */
 function deletegotomeeting($gotowebinarid, $gotomeetinglicence) {
 
     $gotooauth = new mod_gotomeeting\GoToOAuth($gotomeetinglicence);
@@ -105,6 +124,12 @@ function deletegotomeeting($gotowebinarid, $gotomeetinglicence) {
     }
 }
 
+/**
+ * 
+ * @param type $gotomeeting
+ * @return type
+ * @throws moodle_exception
+ */
 function get_gotomeeting($gotomeeting) {
 
     $gotooauth = new mod_gotomeeting\GoToOAuth($gotomeeting->gotomeeting_licence);

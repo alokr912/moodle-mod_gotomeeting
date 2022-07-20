@@ -53,7 +53,7 @@ function gotomeeting_get_coursemodule_info($coursemodule) {
 function gotomeeting_add_instance($data, $mform = null) {
 
     global $USER, $DB;
-    $response = createGoToMeeting($data);
+    $response = creategotomeeting($data);
 
     if ($response) {
         $data->userid = $USER->id;
