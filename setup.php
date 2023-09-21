@@ -34,6 +34,7 @@ if (!is_siteadmin()) {
     throw new moodle_exception('nopermissions', 'gotomeeting');
 }
 
+
 $gotomeetingconfig = get_config(mod_gotomeeting\GoToOAuth::PLUGIN_NAME);
 
 $gotoauth = new mod_gotomeeting\GoToOAuth(null);
