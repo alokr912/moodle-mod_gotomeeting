@@ -36,6 +36,11 @@ if ($ADMIN->fulltree) {
     $description = get_string('gtm_consumer_secret_desc', 'gotomeeting');
     $settings->add(new admin_setting_configtext($name, $visiblename, $description, '', PARAM_RAW, 50));
 
+    $name = 'gotomeeting/licence_display';
+    $visiblename = get_string('licence_display', 'gotomeeting');
+    $description = get_string('licence_display_desc', 'gotomeeting');
+    $choice = array('name'=>'Name','email'=>'Email');
+    $settings->add(new admin_setting_configselect ($name, $visiblename, $description,'name' , $choice));
     $licences = $DB->get_records('gotomeeting_licence');
 
     $actionshtml = html_writer::start_div('container');

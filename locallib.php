@@ -51,10 +51,10 @@ function creategotomeeting($gotomeeting) {
     $attributes['passwordrequired'] = 'false';
     $attributes['conferencecallinfo'] = 'Hybrid';
     $attributes['meetingtype'] = 'scheduled';
-    $attributes['timezonekey'] = get_user_timezone();
+    $attributes['timezonekey'] = '';//get_user_timezone();
 
     $response = $gotooauth->post("/G2M/rest/meetings", $attributes);
-
+   
     if ($response) {
         return $response;
     }
@@ -91,7 +91,7 @@ function updategotomeeting($oldgotomeeting, $gotomeeting) {
     $attributes['passwordrequired'] = 'false';
     $attributes['conferencecallinfo'] = 'Hybrid';
     $attributes['meetingtype'] = 'scheduled';
-    $attributes['timezonekey'] = get_user_timezone();
+    $attributes['timezonekey'] = '';//get_user_timezone();
 
     $response = $gotooauth->put("/G2M/rest/meetings/{$oldgotomeeting->gotomeetingid}", $attributes);
 

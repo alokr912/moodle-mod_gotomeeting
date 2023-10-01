@@ -34,7 +34,8 @@ class mod_gotomeeting_mod_form extends moodleform_mod {
 
         $licences = $this->get_gotomeeting_licence();
         if (!$licences) {
-            throw new moodle_exception('licencerequired', 'gotomeeting', $link);
+            //$link  = new moodle
+            throw new moodle_exception('licencerequired', 'gotomeeting');
         }
         $mform->addElement('header', 'general', get_string('generalsetting', 'gotomeeting'));
 
@@ -138,9 +139,14 @@ class mod_gotomeeting_mod_form extends moodleform_mod {
         global $DB;
         $licences = array();
         $gotomeetinglicences = $DB->get_records('gotomeeting_licence', null, 'email');
+        $licence_display = get_config('gotomeeting', 'licence_display');
         foreach ($gotomeetinglicences as $gotomeetinglicence) {
-
-            $licences[$gotomeetinglicence->id] = $gotomeetinglicence->email;
+            if($licence_display == 'email'){
+               $licences[$gotomeetinglicence->id] = $gotomeetinglicence->email;  
+            }else{
+                $licences[$gotomeetinglicence->id] = $gotomeetinglicence->first_name .' '.$gotomeetinglicence->last_name; 
+            }
+           
         }
         return $licences;
     }

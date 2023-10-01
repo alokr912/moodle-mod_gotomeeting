@@ -1,4 +1,5 @@
 <?php
+
 // This file is part of the GoToMeeting plugin for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -41,7 +42,7 @@ $PAGE->set_heading(get_string('setup', 'gotomeeting'));
 echo $OUTPUT->header();
 
 if ($result) {
-    echo html_writer::div(get_string('setupcomplete', 'gotomeeting'), 'alert alert-success');
+    \core\notification::success(get_string('setupcomplete', 'gotomeeting'));
 } else {
     echo html_writer::div(get_string('setuperror', 'gotomeeting'), 'alert alert-danger');
 }

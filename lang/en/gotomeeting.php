@@ -90,5 +90,16 @@ $string['completedpercentage'] = 'Completed percentage';
 $string['setupcomplete'] = 'GoToMeeting setup is complete';
 $string['setuperror'] = 'Unable to complete setup, kindly raise an issue  at https://github.com/alokr912/moodle-mod_gotomeeting/issues';
 $string['setup'] = 'Setting up new GoToMeeting license';
+$string['licence_display'] = 'Display license email/name';
+$string['licence_display_desc'] = 'Display license email/name';
+$string[''] = '';
+$string[''] = '';
+$string[''] = '';
+$string[''] = '';
+$string[''] = '';
+$string[''] = '';
+$string[''] = '';
+$string[''] = '';
+$string[''] = '';
 $string[''] = '';
 
