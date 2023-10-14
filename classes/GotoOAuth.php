@@ -1,4 +1,5 @@
 <?php
+
 // This file is part of the GoToMeeting plugin for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -31,6 +32,7 @@ use curl;
 class GotoOAuth {
 
     public const BASE_URL = "https://api.getgo.com";
+    public const OAUTH_URL = "https://authentication.logmeininc.com";
     public const PLUGIN_NAME = "gotomeeting";
     public const ACCESS_TOKEN = "access_token";
     public const REFRESH_TOKEN = "refresh_token";
@@ -74,11 +76,30 @@ class GotoOAuth {
         $this->curl->setHeader($headers);
 
         $redirecturl = $CFG->wwwroot . '/mod/gotomeeting/oauthCallback.php';
-        $data = ['redirect_uri' => $redirecturl, 'grant_type' => 'authorization_code', 'code' => $code];
-        $serveroutput = $this->curl->post(self::BASE_URL . '/oauth/v2/token', self::encode_attributes($data));
+        $data = ['redirect_uri' => $redirecturl, 'grant_type' => 'authorization_code', 'code' => $code, 'client_id' => $this->consumerkey];
+        $serveroutput = $this->curl->post(self::OAUTH_URL . '/oauth/token', self::encode_attributes($data));
 
         $response = json_decode($serveroutput);
-        return $this->update_access_token($response);
+
+        $profile = $this->getProfileInfo($response->access_token);
+
+        $licencse = new \stdClass();
+        $licencse->account_key = $profile->key;
+        $licencse->organizer_key = $profile->accountKey;
+        $licencse->email = $profile->email;
+        $licencse->first_name = $profile->firstName;
+        $licencse->last_name = $profile->lastName;
+        $licencse->access_token = $response->access_token;
+        $licencse->refresh_token = $response->refresh_token;
+        $licencse->token_type = $response->token_type;
+        $licencse->expires_in = $response->expires_in;
+
+        $licencse->active = 1;
+        $licencse->timecreated = time();
+        $licencse->timemodified = time();
+        $licencse->access_token_time = time();
+        
+        return $this->update_access_token($licencse);
     }
 
     public function getaccesstokenwithrefreshtoken($refreshtoken) {
@@ -92,16 +113,14 @@ class GotoOAuth {
         $this->curl->setHeader($headers);
         $data = ['grant_type' => 'refresh_token', 'refresh_token' => $refreshtoken];
 
-        $serveroutput = $this->curl->post(self::BASE_URL . '/oauth/v2/token', self::encode_attributes($data));
+        $serveroutput = $this->curl->post(self::OAUTH_URL . '/oauth/token', self::encode_attributes($data));
 
         $response = json_decode($serveroutput);
 
-        if (isset($response) && isset($response->access_token) && isset($response->refresh_token) &&
-                isset($response->organizer_key) && isset($response->account_key)) {
+        if (isset($response) && isset($response->access_token)) {
+            $response->email= $response->principal;
             $this->update_access_token($response);
             $this->accesstoken = $response->access_token;
-            $this->refreshtoken = $response->refresh_token;
-
             $this->accesstokentime = time();
 
             return $response->access_token;
@@ -184,7 +203,7 @@ class GotoOAuth {
 
         $data = ['grant_type' => 'refresh_token', 'refresh_token' => $this->refreshtoken];
 
-        $serveroutput = $this->curl->post(self::BASE_URL . "/oauth/v2/token", self::encode_attributes($data));
+        $serveroutput = $this->curl->post(self::OAUTH_URL . "/oauth/token", self::encode_attributes($data));
 
         return json_decode($serveroutput);
     }
@@ -198,17 +217,28 @@ class GotoOAuth {
         return join('&', $return);
     }
 
+    public function getProfileInfo($access_token) {
+
+        $headers = [
+            'Authorization: Bearer ' . $access_token
+        ];
+        $this->curl->resetHeader();
+        $this->curl->setHeader($headers);
+        $serveroutput = $this->curl->get(self::BASE_URL . "/admin/rest/v1/me?includeAdmins=false&includeInvitation=false");
+
+        return json_decode($serveroutput);
+    }
+
     private function update_access_token($response) {
         global $DB;
-        if (isset($response) && isset($response->access_token) && isset($response->refresh_token) &&
-                isset($response->organizer_key) && isset($response->account_key)) {
-            $gotomeetinglicence = $DB->get_record('gotomeeting_licence', array('organizer_key' => $response->organizer_key));
+        if (isset($response) && isset($response->access_token) && isset($response->refresh_token)) {
+            $gotomeetinglicence = $DB->get_record('gotomeeting_licence', array('email' => $response->email));
 
             if (!$gotomeetinglicence) {
                 $gotomeetinglicence = new \stdClass();
                 $gotomeetinglicence->email = $response->email;
-                $gotomeetinglicence->first_name = $response->firstName;
-                $gotomeetinglicence->last_name = $response->lastName;
+                $gotomeetinglicence->first_name = $response->first_name;
+                $gotomeetinglicence->last_name = $response->last_name;
                 $gotomeetinglicence->access_token = $response->access_token;
                 $gotomeetinglicence->refresh_token = $response->refresh_token;
                 $gotomeetinglicence->token_type = $response->token_type;

@@ -48,7 +48,7 @@ function creategotomeeting($gotomeeting) {
     $edate = usergetdate(usertime($gotomeeting->enddatetime - $dstoffset));
     $attributes['endtime'] = $edate['year'] . '-' . $edate['mon'] . '-' . $edate['mday'] . 'T' .
             $edate['hours'] . ':' . $edate['minutes'] . ':' . $edate['seconds'] . 'Z';
-    $attributes['passwordrequired'] = 'false';
+    $attributes['passwordrequired'] = false;
     $attributes['conferencecallinfo'] = 'Hybrid';
     $attributes['meetingtype'] = 'scheduled';
     $attributes['timezonekey'] = '';//get_user_timezone();
@@ -167,7 +167,7 @@ function get_gotomeeting_attendance($gotomeeting) {
 
     $table = new html_table();
 
-    $table->head = array(get_string('attendee', 'gotomeeting'), get_string('jointime', 'gotomeeting'),
+    $table->head = array(get_string('name', 'gotomeeting'),get_string('email', 'gotomeeting'), get_string('jointime', 'gotomeeting'),
         get_string('leavetime', 'gotomeeting'), get_string('completedpercentage', 'gotomeeting'));
 
     $rows = array();
@@ -182,7 +182,7 @@ function get_gotomeeting_attendance($gotomeeting) {
             $attendancepercentage = number_format(($attendance->duration * 60 * 100) / $duration, 2);
         }
 
-        $rows[] = array($attendance->attendeeName, $attendance->joinTime, $attendance->leaveTime, $attendancepercentage);
+        $rows[] = array($attendance->attendeeName, $attendance->email,$attendance->joinTime, $attendance->leaveTime, $attendancepercentage);
     }
 
     $table->data = $rows;
