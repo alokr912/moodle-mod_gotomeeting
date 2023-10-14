@@ -116,7 +116,7 @@ class GotoOAuth {
         $serveroutput = $this->curl->post(self::OAUTH_URL . '/oauth/token', self::encode_attributes($data));
 
         $response = json_decode($serveroutput);
-
+      
         if (isset($response) && isset($response->access_token)) {
             $response->email= $response->principal;
             $this->update_access_token($response);
@@ -143,7 +143,7 @@ class GotoOAuth {
         $headers = [
             'Authorization: Bearer ' . $this->getAccessToken()
         ];
-
+        $this->curl->resetHeader();
         $this->curl->setHeader($headers);
 
         $serveroutput = $this->curl->post(self::BASE_URL . $endpoint, json_encode($data));
@@ -156,6 +156,7 @@ class GotoOAuth {
         $headers = [
             'Authorization: Bearer ' . $this->getAccessToken()
         ];
+        $this->curl->resetHeader();
         $this->curl->setHeader($headers);
 
         $serveroutput = $this->curl->put(self::BASE_URL . $endpoint, json_encode($data));
@@ -169,6 +170,7 @@ class GotoOAuth {
         $headers = [
             'Authorization: Bearer ' . $this->getAccessToken()
         ];
+        $this->curl->resetHeader();
         $this->curl->setHeader($headers);
 
         $serveroutput = $this->curl->get(self::BASE_URL . $endpoint);
@@ -181,6 +183,7 @@ class GotoOAuth {
         $headers = [
             'Authorization: Bearer ' . $this->getAccessToken()
         ];
+         $this->curl->resetHeader();
         $this->curl->setHeader($headers);
 
         $serveroutput = $this->curl->delete(self::BASE_URL . $endpoint, json_encode($data));
@@ -231,9 +234,9 @@ class GotoOAuth {
 
     private function update_access_token($response) {
         global $DB;
-        if (isset($response) && isset($response->access_token) && isset($response->refresh_token)) {
+        if (isset($response) && isset($response->access_token)) {
             $gotomeetinglicence = $DB->get_record('gotomeeting_licence', array('email' => $response->email));
-
+            print_object($gotomeetinglicence);
             if (!$gotomeetinglicence) {
                 $gotomeetinglicence = new \stdClass();
                 $gotomeetinglicence->email = $response->email;
@@ -252,11 +255,12 @@ class GotoOAuth {
                 $DB->insert_record('gotomeeting_licence', $gotomeetinglicence);
             } else {
                 $gotomeetinglicence->access_token = $response->access_token;
-                $gotomeetinglicence->refresh_token = $response->refresh_token;
+               // $gotomeetinglicence->refresh_token = $response->refresh_token;
                 $gotomeetinglicence->timemodified = time();
                 $gotomeetinglicence->access_token_time = time();
-
+               
                 $DB->update_record('gotomeeting_licence', $gotomeetinglicence);
+               
             }
 
             return true;
