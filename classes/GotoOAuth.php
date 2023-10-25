@@ -79,27 +79,12 @@ class GotoOAuth {
         $data = ['redirect_uri' => $redirecturl, 'grant_type' => 'authorization_code', 'code' => $code, 'client_id' => $this->consumerkey];
         $serveroutput = $this->curl->post(self::OAUTH_URL . '/oauth/token', self::encode_attributes($data));
 
-        $response = json_decode($serveroutput);
+        $token = json_decode($serveroutput);
 
-        $profile = $this->getProfileInfo($response->access_token);
+        $profile = $this->getProfileInfo($token->access_token);
 
-        $licencse = new \stdClass();
-        $licencse->account_key = $profile->key;
-        $licencse->organizer_key = $profile->accountKey;
-        $licencse->email = $profile->email;
-        $licencse->first_name = $profile->firstName;
-        $licencse->last_name = $profile->lastName;
-        $licencse->access_token = $response->access_token;
-        $licencse->refresh_token = $response->refresh_token;
-        $licencse->token_type = $response->token_type;
-        $licencse->expires_in = $response->expires_in;
-
-        $licencse->active = 1;
-        $licencse->timecreated = time();
-        $licencse->timemodified = time();
-        $licencse->access_token_time = time();
         
-        return $this->update_access_token($licencse);
+        return $this->update_access_token($token,$profile);
     }
 
     public function getaccesstokenwithrefreshtoken($refreshtoken) {
@@ -118,8 +103,9 @@ class GotoOAuth {
         $response = json_decode($serveroutput);
       
         if (isset($response) && isset($response->access_token)) {
+             $profile = $this->getProfileInfo($response->access_token);
             $response->email= $response->principal;
-            $this->update_access_token($response);
+            $this->update_access_token($response,$profile);
             $this->accesstoken = $response->access_token;
             $this->accesstokentime = time();
 
@@ -228,38 +214,42 @@ class GotoOAuth {
         $this->curl->resetHeader();
         $this->curl->setHeader($headers);
         $serveroutput = $this->curl->get(self::BASE_URL . "/admin/rest/v1/me?includeAdmins=false&includeInvitation=false");
-
+        
         return json_decode($serveroutput);
     }
 
-    private function update_access_token($response) {
+    private function update_access_token($token,$profile) {
+        
+     
         global $DB;
-        if (isset($response) && isset($response->access_token)) {
-            $gotomeetinglicence = $DB->get_record('gotomeeting_licence', array('email' => $response->email));
-            print_object($gotomeetinglicence);
-            if (!$gotomeetinglicence) {
-                $gotomeetinglicence = new \stdClass();
-                $gotomeetinglicence->email = $response->email;
-                $gotomeetinglicence->first_name = $response->first_name;
-                $gotomeetinglicence->last_name = $response->last_name;
-                $gotomeetinglicence->access_token = $response->access_token;
-                $gotomeetinglicence->refresh_token = $response->refresh_token;
-                $gotomeetinglicence->token_type = $response->token_type;
-                $gotomeetinglicence->expires_in = $response->expires_in;
-                $gotomeetinglicence->account_key = $response->account_key;
-                $gotomeetinglicence->organizer_key = $response->organizer_key;
-                $gotomeetinglicence->active = 1;
-                $gotomeetinglicence->timecreated = time();
-                $gotomeetinglicence->timemodified = time();
-                $gotomeetinglicence->access_token_time = time();
-                $DB->insert_record('gotomeeting_licence', $gotomeetinglicence);
+        if (isset($token) && isset($token->access_token)) {
+            $licence = $DB->get_record('gotomeeting_licence', array('email' => $profile->email));
+            if (!$licence) {
+                $licence = new \stdClass();
+                $licence->email = $profile->email;
+                $licence->first_name = $profile->firstName;
+                $licence->last_name = $profile->lastName;
+                $licence->access_token = $token->access_token;
+                $licence->refresh_token = $token->refresh_token;
+                $licence->principal =$token->principal;
+                $licence->locale = $profile->locale;
+                $licence->time_zone = $profile->timeZone;
+                $licence->token_type = $token->token_type;
+                $licence->expires_in = $token->expires_in;
+                $licence->account_key = $profile->accountKey;
+                $licence->organizer_key = $profile->key;
+                $licence->active = 1;
+                $licence->timecreated = time();
+                $licence->timemodified = time();
+                $licence->access_token_time = time();
+                $DB->insert_record('gotomeeting_licence', $licence);
             } else {
-                $gotomeetinglicence->access_token = $response->access_token;
+                $licence->access_token = $token->access_token;
                // $gotomeetinglicence->refresh_token = $response->refresh_token;
-                $gotomeetinglicence->timemodified = time();
-                $gotomeetinglicence->access_token_time = time();
+                $licence->timemodified = time();
+                $licence->access_token_time = time();
                
-                $DB->update_record('gotomeeting_licence', $gotomeetinglicence);
+                $DB->update_record('gotomeeting_licence', $licence);
                
             }
 

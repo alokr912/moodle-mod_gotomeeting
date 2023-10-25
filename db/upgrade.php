@@ -1,4 +1,5 @@
 <?php
+
 // This file is part of the GoToMeeting plugin for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -20,8 +21,6 @@
  * @copyright 2017 Alok Kumar Rai <alokr.mail@gmail.com,alokkumarrai@outlook.in>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-
 function xmldb_gotomeeting_upgrade($oldversion) {
     global $DB;
     $dbman = $DB->get_manager();
@@ -47,10 +46,8 @@ function xmldb_gotomeeting_upgrade($oldversion) {
         $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
         $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
 
-        // Adding keys to table assignfeedback_editpdf_rot.
         $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
-        // Adding indexes to table assignfeedback_editpdf_rot.
-        // Conditionally launch create table for assignfeedback_editpdf_rot.
+
         if (!$dbman->table_exists($table)) {
             $dbman->create_table($table);
         }
@@ -62,12 +59,36 @@ function xmldb_gotomeeting_upgrade($oldversion) {
 
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
 
-         $field = new xmldb_field('gotomeeting_licence', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, 0, 'id');
+        $field = new xmldb_field('gotomeeting_licence', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, 0, 'id');
 
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
         upgrade_mod_savepoint(true, 2017070906, 'gotomeeting');
+    }
+    if ($oldversion < 2017070908) {
+        $table = new xmldb_table('gotomeeting_licence');
+
+        $field = new xmldb_field('principal', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, 0, 'email');
+
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        $field = new xmldb_field('locale', XMLDB_TYPE_CHAR, '25', null, XMLDB_NOTNULL, null, 0, 'last_name');
+
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $field = new xmldb_field('time_zone', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, 0, 'last_name');
+
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        
+        $table->add_key('primary', XMLDB_KEY_UNIQUE, ['principal']);
+        upgrade_mod_savepoint(true, 2017070908, 'gotomeeting');
     }
     return true;
 }

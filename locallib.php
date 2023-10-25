@@ -131,13 +131,14 @@ function deletegotomeeting($gotowebinarid, $gotomeetinglicence) {
  * @throws moodle_exception
  */
 function get_gotomeeting($gotomeeting) {
-
+  $meetinginfo = json_decode($gotomeeting->meetinfo);
     $gotooauth = new mod_gotomeeting\GoToOAuth($gotomeeting->gotomeeting_licence);
     if (!isset($gotooauth->organizerkey) || empty($gotooauth->organizerkey)) {
         throw new moodle_exception('incompletesetup', 'gotomeeting');
     }
     $context = context_course::instance($gotomeeting->course);
-    if (is_siteadmin() OR has_capability('mod/gotomeeting:organiser', $context) OR
+   
+    if (has_capability('mod/gotomeeting:organiser', $context) OR
             has_capability('mod/gotomeeting:presenter', $context)) {
 
         $response = $gotooauth->get("/G2M/rest/meetings/{$gotomeeting->gotomeetingid}/start");
@@ -145,8 +146,9 @@ function get_gotomeeting($gotomeeting) {
         if ($response) {
             return $response->hostURL;
         }
+         return $meetinginfo->joinURL;
     } else {
-        $meetinginfo = json_decode($gotomeeting->meetinfo);
+        
         return $meetinginfo->joinURL;
     }
 }
