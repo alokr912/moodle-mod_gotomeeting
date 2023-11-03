@@ -28,11 +28,15 @@ require_once($CFG->dirroot . '/mod/gotomeeting/locallib.php');
 
 class mod_gotomeeting_mod_form extends moodleform_mod {
 
+    /**
+     * Mod GoToMeeting activity creation form.
+     * @throws moodle_exception
+     */
     public function definition() {
 
         $mform = $this->_form;
 
-        $licences = $this->get_gotomeeting_licence();
+        $licences = $this->get_gotomeeting_license();
         if (!$licences) {
             throw new moodle_exception('licencerequired', 'gotomeeting');
         }
@@ -70,16 +74,31 @@ class mod_gotomeeting_mod_form extends moodleform_mod {
         $this->add_action_buttons(true, false, null);
     }
 
+    /**
+     * Defining new completion rules.
+     * @return type
+     */
     public function add_completion_rules() {
         $mform = & $this->_form;
 
         return [];
     }
 
+    /**
+     * Defining completion rule status
+     * @param type $data
+     * @return type
+     */
     public function completion_rule_enabled($data) {
         return (!empty($data['completionparticipationenabled']) && $data['completionparticipation'] != 0);
     }
 
+    /**
+     * Validation for activity creation.
+     * @param type $data
+     * @param type $files
+     * @return string
+     */
     public function validation($data, $files) {
 
         $errors = parent::validation($data, $files);
@@ -119,6 +138,10 @@ class mod_gotomeeting_mod_form extends moodleform_mod {
         return $errors;
     }
 
+    /**
+     * Custom data form
+     * @return type
+     */
     public function get_data() {
         $data = parent::get_data();
         if (!$data) {
@@ -134,7 +157,12 @@ class mod_gotomeeting_mod_form extends moodleform_mod {
         return $data;
     }
 
-    private function get_gotomeeting_licence() {
+    /**
+     * Loading GoToMeeting license.
+     * @global type $DB
+     * @return string
+     */
+    private function get_gotomeeting_license() {
         global $DB;
         $licences = [];
         $gotomeetinglicences = $DB->get_records('gotomeeting_licence', null, 'email');
