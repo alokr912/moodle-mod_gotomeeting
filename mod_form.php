@@ -14,6 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+defined('MOODLE_INTERNAL') || die;
+
+require_once($CFG->dirroot . '/course/moodleform_mod.php');
+require_once($CFG->dirroot . '/mod/gotomeeting/locallib.php');
+
 /**
  * GoToMeeting module form
  *
@@ -21,10 +26,6 @@
  * @copyright 2017 Alok Kumar Rai <alokr.mail@gmail.com,alokkumarrai@outlook.in>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-defined('MOODLE_INTERNAL') || die;
-
-require_once($CFG->dirroot . '/course/moodleform_mod.php');
-require_once($CFG->dirroot . '/mod/gotomeeting/locallib.php');
 
 class mod_gotomeeting_mod_form extends moodleform_mod {
 
@@ -76,7 +77,7 @@ class mod_gotomeeting_mod_form extends moodleform_mod {
 
     /**
      * Defining new completion rules.
-     * @return type
+     * @return array
      */
     public function add_completion_rules() {
         $mform = & $this->_form;
@@ -87,7 +88,7 @@ class mod_gotomeeting_mod_form extends moodleform_mod {
     /**
      * Defining completion rule status
      * @param type $data
-     * @return type
+     * @return Boolean
      */
     public function completion_rule_enabled($data) {
         return (!empty($data['completionparticipationenabled']) && $data['completionparticipation'] != 0);
@@ -140,7 +141,7 @@ class mod_gotomeeting_mod_form extends moodleform_mod {
 
     /**
      * Custom data form
-     * @return type
+     * @return stdClass
      */
     public function get_data() {
         $data = parent::get_data();
