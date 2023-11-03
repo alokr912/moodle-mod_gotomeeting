@@ -14,6 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * This file contains the forms to create and edit an instance of this module
+ *
+ * @package mod_gotomeeting
+ * @copyright  2017 Alok Kumar Rai <alokr.mail@gmail.com,alokkumarrai@outlook.in>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 defined('MOODLE_INTERNAL') || die;
 
 require_once($CFG->dirroot . '/course/moodleform_mod.php');
@@ -86,8 +94,8 @@ class mod_gotomeeting_mod_form extends moodleform_mod {
     }
 
     /**
-     * Defining completion rule status
-     * @param type $data
+     * Defining completion rule status.
+     * @param array $data
      * @return Boolean
      */
     public function completion_rule_enabled($data) {
@@ -96,9 +104,9 @@ class mod_gotomeeting_mod_form extends moodleform_mod {
 
     /**
      * Validation for activity creation.
-     * @param type $data
-     * @param type $files
-     * @return string
+     * @param array $data
+     * @param array $files
+     * @return array
      */
     public function validation($data, $files) {
 
@@ -140,8 +148,8 @@ class mod_gotomeeting_mod_form extends moodleform_mod {
     }
 
     /**
-     * Custom data form
-     * @return stdClass
+     * Custom data form to get data.
+     * @return stdClass $data
      */
     public function get_data() {
         $data = parent::get_data();
@@ -160,8 +168,7 @@ class mod_gotomeeting_mod_form extends moodleform_mod {
 
     /**
      * Loading GoToMeeting license.
-     * @global type $DB
-     * @return string
+     * @return string $license
      */
     private function get_gotomeeting_license() {
         global $DB;
