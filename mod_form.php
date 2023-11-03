@@ -28,13 +28,11 @@ require_once($CFG->dirroot . '/course/moodleform_mod.php');
 require_once($CFG->dirroot . '/mod/gotomeeting/locallib.php');
 
 /**
- * GoToMeeting module form
- *
+ * GoToMeeting Instance add/edit form
  * @package mod_gotomeeting
  * @copyright 2017 Alok Kumar Rai <alokr.mail@gmail.com,alokkumarrai@outlook.in>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 class mod_gotomeeting_mod_form extends moodleform_mod {
 
     /**

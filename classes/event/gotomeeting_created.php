@@ -13,18 +13,16 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+namespace mod_gotomeeting\event;
+
 /**
- * GoToWebinar module config test file
+ * GoToMeeting module event for instance creation.
  *
  * @package mod_gotomeeting
  * @copyright  2017 Alok Kumar Rai <alokr.mail@gmail.com,alokkumarrai@outlook.in>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-namespace mod_gotomeeting\event;
-
-
-
 class gotomeeting_created extends \core\event\base {
 
     /**
