@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of the GoToMeeting plugin for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -53,7 +52,7 @@ class GotoOAuth {
     public function __construct($licenceid = null) {
         global $DB;
         $this->curl = new curl();
-        $licence = $DB->get_record('gotomeeting_licence', array('id' => $licenceid));
+        $licence = $DB->get_record('gotomeeting_licence', ['id' => $licenceid]);
 
         if ($licence) {
             $this->organizerkey = !empty($licence->organizer_key) ? $licence->organizer_key : null;
@@ -71,20 +70,20 @@ class GotoOAuth {
         $headers = [
             'Authorization: Basic ' . $authorization,
             'Accept:application/json',
-            'Content-Type: application/x-www-form-urlencoded; charset=utf-8'
+            'Content-Type: application/x-www-form-urlencoded; charset=utf-8',
         ];
         $this->curl->setHeader($headers);
 
         $redirecturl = $CFG->wwwroot . '/mod/gotomeeting/oauthCallback.php';
-        $data = ['redirect_uri' => $redirecturl, 'grant_type' => 'authorization_code', 'code' => $code, 'client_id' => $this->consumerkey];
+        $data = ['redirect_uri' => $redirecturl, 'grant_type' => 'authorization_code', 'code' => $code,
+            'client_id' => $this->consumerkey, ];
         $serveroutput = $this->curl->post(self::OAUTH_URL . '/oauth/token', self::encode_attributes($data));
 
         $token = json_decode($serveroutput);
 
-        $profile = $this->getProfileInfo($token->access_token);
+        $profile = $this->getprofileinfo($token->access_token);
 
-        
-        return $this->update_access_token($token,$profile);
+        return $this->update_access_token($token, $profile);
     }
 
     public function getaccesstokenwithrefreshtoken($refreshtoken) {
@@ -92,7 +91,7 @@ class GotoOAuth {
 
         $headers = [
             'Authorization: Basic ' . base64_encode($gotowebinarconfig->consumer_key . ":" . $gotowebinarconfig->consumer_secret),
-            'Content-Type: application/x-www-form-urlencoded; charset=utf-8'
+            'Content-Type: application/x-www-form-urlencoded; charset=utf-8',
         ];
 
         $this->curl->setHeader($headers);
@@ -101,11 +100,11 @@ class GotoOAuth {
         $serveroutput = $this->curl->post(self::OAUTH_URL . '/oauth/token', self::encode_attributes($data));
 
         $response = json_decode($serveroutput);
-      
+
         if (isset($response) && isset($response->access_token)) {
-             $profile = $this->getProfileInfo($response->access_token);
-            $response->email= $response->principal;
-            $this->update_access_token($response,$profile);
+            $profile = $this->getprofileinfo($response->access_token);
+            $response->email = $response->principal;
+            $this->update_access_token($response, $profile);
             $this->accesstoken = $response->access_token;
             $this->accesstokentime = time();
 
@@ -127,7 +126,7 @@ class GotoOAuth {
     public function post($endpoint, $data) {
 
         $headers = [
-            'Authorization: Bearer ' . $this->getAccessToken()
+            'Authorization: Bearer ' . $this->getAccessToken(),
         ];
         $this->curl->resetHeader();
         $this->curl->setHeader($headers);
@@ -140,7 +139,7 @@ class GotoOAuth {
     public function put($endpoint, $data) {
 
         $headers = [
-            'Authorization: Bearer ' . $this->getAccessToken()
+            'Authorization: Bearer ' . $this->getAccessToken(),
         ];
         $this->curl->resetHeader();
         $this->curl->setHeader($headers);
@@ -154,7 +153,7 @@ class GotoOAuth {
     public function get($endpoint) {
 
         $headers = [
-            'Authorization: Bearer ' . $this->getAccessToken()
+            'Authorization: Bearer ' . $this->getAccessToken(),
         ];
         $this->curl->resetHeader();
         $this->curl->setHeader($headers);
@@ -167,9 +166,9 @@ class GotoOAuth {
     public function delete($endpoint, $data = null) {
 
         $headers = [
-            'Authorization: Bearer ' . $this->getAccessToken()
+            'Authorization: Bearer ' . $this->getAccessToken(),
         ];
-         $this->curl->resetHeader();
+        $this->curl->resetHeader();
         $this->curl->setHeader($headers);
 
         $serveroutput = $this->curl->delete(self::BASE_URL . $endpoint, json_encode($data));
@@ -186,7 +185,7 @@ class GotoOAuth {
 
         $headers = [
             'Authorization: Basic ' . base64_encode($gotowebinarconfig->consumer_key . ":" . $gotowebinarconfig->consumer_secret),
-            'Content-Type: application/x-www-form-urlencoded; charset=utf-8'
+            'Content-Type: application/x-www-form-urlencoded; charset=utf-8',
         ];
         $this->curl->setHeader($headers);
 
@@ -199,31 +198,30 @@ class GotoOAuth {
 
     public static function encode_attributes($attributes) {
 
-        $return = array();
+        $return = [];
         foreach ($attributes as $key => $value) {
             $return[] = urlencode($key) . '=' . urlencode($value);
         }
         return join('&', $return);
     }
 
-    public function getProfileInfo($access_token) {
+    private function getprofileinfo($accesstoken) {
 
         $headers = [
-            'Authorization: Bearer ' . $access_token
+            'Authorization: Bearer ' . $accesstoken,
         ];
         $this->curl->resetHeader();
         $this->curl->setHeader($headers);
         $serveroutput = $this->curl->get(self::BASE_URL . "/admin/rest/v1/me?includeAdmins=false&includeInvitation=false");
-        
+
         return json_decode($serveroutput);
     }
 
-    private function update_access_token($token,$profile) {
-        
-     
+    private function update_access_token($token, $profile) {
+
         global $DB;
         if (isset($token) && isset($token->access_token)) {
-            $licence = $DB->get_record('gotomeeting_licence', array('email' => $profile->email));
+            $licence = $DB->get_record('gotomeeting_licence', ['email' => $profile->email]);
             if (!$licence) {
                 $licence = new \stdClass();
                 $licence->email = $profile->email;
@@ -231,7 +229,7 @@ class GotoOAuth {
                 $licence->last_name = $profile->lastName;
                 $licence->access_token = $token->access_token;
                 $licence->refresh_token = $token->refresh_token;
-                $licence->principal =$token->principal;
+                $licence->principal = $token->principal;
                 $licence->locale = $profile->locale;
                 $licence->time_zone = $profile->timeZone;
                 $licence->token_type = $token->token_type;
@@ -245,12 +243,10 @@ class GotoOAuth {
                 $DB->insert_record('gotomeeting_licence', $licence);
             } else {
                 $licence->access_token = $token->access_token;
-               // $gotomeetinglicence->refresh_token = $response->refresh_token;
                 $licence->timemodified = time();
                 $licence->access_token_time = time();
-               
+
                 $DB->update_record('gotomeeting_licence', $licence);
-               
             }
 
             return true;

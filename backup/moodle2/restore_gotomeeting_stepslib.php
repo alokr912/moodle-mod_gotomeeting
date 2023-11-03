@@ -25,7 +25,7 @@ class restore_gotomeeting_activity_structure_step extends restore_activity_struc
 
     protected function define_structure() {
 
-        $paths = array();
+        $paths = [];
         $userinfo = false;
 
         $paths[] = new restore_path_element('gotomeeting', '/activity/gotomeeting');

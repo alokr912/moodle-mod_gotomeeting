@@ -24,7 +24,7 @@ defined('MOODLE_INTERNAL') || die;
 require_once($CFG->dirroot . '/mod/gotomeeting/classes/GotoOAuth.php');
 
 /**
- * 
+ *
  * @global type $DB
  * @param type $gotomeeting
  * @return boolean
@@ -39,7 +39,7 @@ function creategotomeeting($gotomeeting) {
         throw new moodle_exception('incompletesetup', 'gotomeeting');
     }
 
-    $attributes = array();
+    $attributes = [];
     $dstoffset = dst_offset_on($gotomeeting->startdatetime, get_user_timezone());
     $attributes['subject'] = $gotomeeting->name;
     $sdate = usergetdate(usertime($gotomeeting->startdatetime - $dstoffset));
@@ -51,10 +51,10 @@ function creategotomeeting($gotomeeting) {
     $attributes['passwordrequired'] = false;
     $attributes['conferencecallinfo'] = 'Hybrid';
     $attributes['meetingtype'] = 'scheduled';
-    $attributes['timezonekey'] = '';//get_user_timezone();
+    $attributes['timezonekey'] = '';
 
     $response = $gotooauth->post("/G2M/rest/meetings", $attributes);
-   
+
     if ($response) {
         return $response;
     }
@@ -62,7 +62,7 @@ function creategotomeeting($gotomeeting) {
 }
 
 /**
- * 
+ *
  * @global type $DB
  * @param type $oldgotomeeting
  * @param type $gotomeeting
@@ -79,7 +79,7 @@ function updategotomeeting($oldgotomeeting, $gotomeeting) {
     if (!isset($gotooauth->organizerkey) || empty($gotooauth->organizerkey)) {
         throw new moodle_exception('incompletesetup', 'gotomeeting');
     }
-    $attributes = array();
+    $attributes = [];
     $attributes['subject'] = $gotomeeting->name;
     $dstoffset = dst_offset_on($gotomeeting->startdatetime, get_user_timezone());
     $sdate = usergetdate(usertime($gotomeeting->startdatetime - $dstoffset));
@@ -91,8 +91,7 @@ function updategotomeeting($oldgotomeeting, $gotomeeting) {
     $attributes['passwordrequired'] = 'false';
     $attributes['conferencecallinfo'] = 'Hybrid';
     $attributes['meetingtype'] = 'scheduled';
-    $attributes['timezonekey'] = '';//get_user_timezone();
-
+    $attributes['timezonekey'] = '';
     $response = $gotooauth->put("/G2M/rest/meetings/{$oldgotomeeting->gotomeetingid}", $attributes);
 
     if ($response) {
@@ -103,7 +102,7 @@ function updategotomeeting($oldgotomeeting, $gotomeeting) {
 }
 
 /**
- * 
+ *
  * @param type $gotowebinarid
  * @param type $gotomeetinglicence
  * @return boolean
@@ -125,20 +124,20 @@ function deletegotomeeting($gotowebinarid, $gotomeetinglicence) {
 }
 
 /**
- * 
+ *
  * @param type $gotomeeting
  * @return type
  * @throws moodle_exception
  */
 function get_gotomeeting($gotomeeting) {
-  $meetinginfo = json_decode($gotomeeting->meetinfo);
+    $meetinginfo = json_decode($gotomeeting->meetinfo);
     $gotooauth = new mod_gotomeeting\GoToOAuth($gotomeeting->gotomeeting_licence);
     if (!isset($gotooauth->organizerkey) || empty($gotooauth->organizerkey)) {
         throw new moodle_exception('incompletesetup', 'gotomeeting');
     }
     $context = context_course::instance($gotomeeting->course);
-   
-    if (has_capability('mod/gotomeeting:organiser', $context) OR
+
+    if (has_capability('mod/gotomeeting:organiser', $context) ||
             has_capability('mod/gotomeeting:presenter', $context)) {
 
         $response = $gotooauth->get("/G2M/rest/meetings/{$gotomeeting->gotomeetingid}/start");
@@ -146,9 +145,9 @@ function get_gotomeeting($gotomeeting) {
         if ($response) {
             return $response->hostURL;
         }
-         return $meetinginfo->joinURL;
+        return $meetinginfo->joinURL;
     } else {
-        
+
         return $meetinginfo->joinURL;
     }
 }
@@ -169,10 +168,10 @@ function get_gotomeeting_attendance($gotomeeting) {
 
     $table = new html_table();
 
-    $table->head = array(get_string('name', 'gotomeeting'),get_string('email', 'gotomeeting'), get_string('jointime', 'gotomeeting'),
-        get_string('leavetime', 'gotomeeting'), get_string('completedpercentage', 'gotomeeting'));
+    $table->head = [get_string('name', 'gotomeeting'), get_string('email', 'gotomeeting'), get_string('jointime', 'gotomeeting'),
+        get_string('leavetime', 'gotomeeting'), get_string('completedpercentage', 'gotomeeting'), ];
 
-    $rows = array();
+    $rows = [];
     foreach ($response as $attendance) {
 
         $jointime = strtotime($attendance->joinTime);
@@ -184,7 +183,8 @@ function get_gotomeeting_attendance($gotomeeting) {
             $attendancepercentage = number_format(($attendance->duration * 60 * 100) / $duration, 2);
         }
 
-        $rows[] = array($attendance->attendeeName, $attendance->email,$attendance->joinTime, $attendance->leaveTime, $attendancepercentage);
+        $rows[] = [$attendance->attendeeName, $attendance->email, $attendance->joinTime,
+            $attendance->leaveTime, $attendancepercentage, ];
     }
 
     $table->data = $rows;
@@ -205,10 +205,10 @@ function get_gotomeeting_attendance_view($gotomeeting) {
 
     $table = new html_table();
 
-    $table->head = array(get_string('attendee', 'gotomeeting'), get_string('jointime', 'gotomeeting'),
-        get_string('leavetime', 'gotomeeting'), get_string('completedpercentage', 'gotomeeting'));
+    $table->head = [get_string('attendee', 'gotomeeting'), get_string('jointime', 'gotomeeting'),
+        get_string('leavetime', 'gotomeeting'), get_string('completedpercentage', 'gotomeeting'), ];
 
-    $rows = array();
+    $rows = [];
     foreach ($response as $attendance) {
 
         $jointime = strtotime($attendance->joinTime);
@@ -220,7 +220,7 @@ function get_gotomeeting_attendance_view($gotomeeting) {
             $attendancepercentage = number_format(($duration * 10 / $differenceinseconds) * 10, 2);
         }
 
-        $rows[] = array($attendance->attendeeName, $attendance->joinTime, $attendance->leaveTime, $differenceinseconds);
+        $rows[] = [$attendance->attendeeName, $attendance->joinTime, $attendance->leaveTime, $differenceinseconds];
     }
 
     $table->data = $rows;
@@ -233,7 +233,7 @@ function get_gotomeeting_view($gotomeeting, $cmid) {
     $context = context_module::instance($cmid);
 
     $table = new html_table();
-    $head = array();
+    $head = [];
     $head[] = get_string('meetingname', 'gotomeeting');
     $head[] = get_string('gotomeetingintro', 'gotomeeting');
     if (has_capability('mod/gotomeeting:addinstance', $context)) {
@@ -249,7 +249,7 @@ function get_gotomeeting_view($gotomeeting, $cmid) {
     }
 
     $table->head = $head;
-    $data = array();
+    $data = [];
     $data[] = $gotomeeting->name;
 
     $data[] = strip_tags($gotomeeting->intro);
@@ -262,17 +262,17 @@ function get_gotomeeting_view($gotomeeting, $cmid) {
     $data[] = userdate($gotomeeting->enddatetime);
     $data[] = $meetinginfo->conferenceCallInfo;
     if (has_capability('mod/gotomeeting:addinstance', $context)) {
-        $reportlink = new moodle_url('attendance.php', array('id' => $cmid));
+        $reportlink = new moodle_url('attendance.php', ['id' => $cmid]);
         $data[] = html_writer::link($reportlink, get_string('report', 'gotomeeting'));
     }
 
     $table->data[] = $data;
 
     $cell2 = new html_table_cell(html_writer::link(trim(get_gotomeeting($gotomeeting), '"'),
-            get_string('join_url', 'gotomeeting'), array("target" => "_blank", 'class' => 'btn btn-primary')));
+                    get_string('join_url', 'gotomeeting'), ["target" => "_blank", 'class' => 'btn btn-primary']));
     $cell2->colspan = 7;
     $cell2->style = 'text-align:center;';
-    $table->data[] = array($cell2);
+    $table->data[] = [$cell2];
 
     return $table;
 }

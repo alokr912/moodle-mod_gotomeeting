@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of the GoToMeeting plugin for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -86,7 +85,6 @@ function xmldb_gotomeeting_upgrade($oldversion) {
             $dbman->add_field($table, $field);
         }
 
-        
         $table->add_key('primary', XMLDB_KEY_UNIQUE, ['principal']);
         upgrade_mod_savepoint(true, 2017070908, 'gotomeeting');
     }

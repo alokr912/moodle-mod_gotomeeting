@@ -44,8 +44,8 @@ class backup_gotomeeting_activity_task extends backup_activity_task {
         $content = preg_replace($search, '$@GOTOLMS*$2@$', $content);
 
         // Link to adobeconnect view by moduleid.
-        $search = "/(" . $base . "\/mod\/GOTOLMS\/view.php\?id\=)([0-9]+)/";
-        $content = preg_replace($search, '$@GOTOLMS*$2@$', $content);
+        $search = "/(" . $base . "\/mod\/gotomeeting\/view.php\?id\=)([0-9]+)/";
+        $content = preg_replace($search, '$@gotomeeting*$2@$', $content);
 
         return $content;
     }

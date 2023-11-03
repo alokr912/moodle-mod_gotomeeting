@@ -31,7 +31,7 @@ require_login();
 if (!is_siteadmin()) {
     throw new moodle_exception('nopermissions');
 }
-$gotomeetinglicence = $DB->get_record('gotomeeting_licence', array('id' => $id), '*', MUST_EXIST);
+$gotomeetinglicence = $DB->get_record('gotomeeting_licence', ['id' => $id], '*', MUST_EXIST);
 $enabled = false;
 $disabled = false;
 if ($action == 'disable' && confirm_sesskey($sesskey)) {
@@ -58,7 +58,7 @@ if ($action == 'disable' && confirm_sesskey($sesskey)) {
 }
 
 
-$PAGE->set_url('/mod/gotomeeting/license.php', array('id' => $id, 'action' => $action));
+$PAGE->set_url('/mod/gotomeeting/license.php', ['id' => $id, 'action' => $action]);
 $PAGE->set_title(get_string('license_title', 'mod_gotomeeting'));
 $PAGE->set_heading(get_string('license_heading', 'mod_gotomeeting'));
 echo $OUTPUT->header();

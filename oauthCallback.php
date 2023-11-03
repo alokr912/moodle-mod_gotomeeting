@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of the GoToMeeting plugin for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -31,7 +30,7 @@ $code = required_param('code', PARAM_RAW);
 require_admin();
 $context = context_system::instance();
 $PAGE->set_context($context);
-$PAGE->set_url(new moodle_url($CFG->wwwroot . '/mod/gotomeeting/oauthCallback.php', array('code' => $code)));
+$PAGE->set_url(new moodle_url($CFG->wwwroot . '/mod/gotomeeting/oauthCallback.php', ['code' => $code]));
 $PAGE->set_pagelayout('admin');
 
 $gotomeeting = new mod_gotomeeting\GoToOAuth(null);

@@ -39,8 +39,8 @@ if ($ADMIN->fulltree) {
     $name = 'gotomeeting/licence_display';
     $visiblename = get_string('licence_display', 'gotomeeting');
     $description = get_string('licence_display_desc', 'gotomeeting');
-    $choice = array('name'=>'Name','email'=>'Email');
-    $settings->add(new admin_setting_configselect ($name, $visiblename, $description,'name' , $choice));
+    $choice = ['name' => 'Name', 'email' => 'Email'];
+    $settings->add(new admin_setting_configselect($name, $visiblename, $description, 'name', $choice));
     $licences = $DB->get_records('gotomeeting_licence');
 
     $actionshtml = html_writer::start_div('container');
@@ -50,29 +50,29 @@ if ($ADMIN->fulltree) {
 
             $class = "btn-outline-danger";
             $url = new moodle_url('/mod/gotomeeting/license.php',
-                    array('id' => $licence->id, 'action' => 'disable', 'sesskey' => sesskey()));
+                    ['id' => $licence->id, 'action' => 'disable', 'sesskey' => sesskey()]);
 
             $actionshtml .= html_writer::start_div('row');
             $actionshtml .= html_writer::start_div('col-md-12');
-            $actionshtml .= html_writer::link($url, 'Disable ' . $licence->email, array('class' => 'btn btn-outline-danger'));
+            $actionshtml .= html_writer::link($url, 'Disable ' . $licence->email, ['class' => 'btn btn-outline-danger']);
             $actionshtml .= html_writer::end_div();
             $actionshtml .= html_writer::end_div();
         } else {
             $class = "btn-secondary";
             $url = new moodle_url('/mod/gotomeeting/license.php',
-                    array('id' => $licence->id, 'action' => 'enable', 'sesskey' => sesskey()));
+                    ['id' => $licence->id, 'action' => 'enable', 'sesskey' => sesskey()]);
             $actionshtml .= html_writer::start_div('row');
             $actionshtml .= html_writer::start_div('col-md-12');
-            $actionshtml .= html_writer::link($url, 'Enable ' . $licence->email, array('class' => 'btn btn-secondary'));
+            $actionshtml .= html_writer::link($url, 'Enable ' . $licence->email, ['class' => 'btn btn-secondary']);
             $actionshtml .= html_writer::end_div();
             $actionshtml .= html_writer::end_div();
         }
     }
     $class = "btn-primary";
-    $url = new moodle_url('/mod/gotomeeting/setup.php', array('sesskey' => sesskey()));
+    $url = new moodle_url('/mod/gotomeeting/setup.php', ['sesskey' => sesskey()]);
     $actionshtml .= html_writer::start_div('row mt-5 mb-5');
     $actionshtml .= html_writer::start_div('col-md-12');
-    $actionshtml .= html_writer::link($url, get_string('addlicence', 'mod_gotomeeting'), array('class' => 'btn btn-secondary'));
+    $actionshtml .= html_writer::link($url, get_string('addlicence', 'mod_gotomeeting'), ['class' => 'btn btn-secondary']);
     $actionshtml .= html_writer::end_div();
     $actionshtml .= html_writer::end_div();
     $actionshtml .= html_writer::end_div();

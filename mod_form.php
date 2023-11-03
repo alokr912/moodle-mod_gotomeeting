@@ -34,7 +34,6 @@ class mod_gotomeeting_mod_form extends moodleform_mod {
 
         $licences = $this->get_gotomeeting_licence();
         if (!$licences) {
-            //$link  = new moodle
             throw new moodle_exception('licencerequired', 'gotomeeting');
         }
         $mform->addElement('header', 'general', get_string('generalsetting', 'gotomeeting'));
@@ -74,7 +73,7 @@ class mod_gotomeeting_mod_form extends moodleform_mod {
     public function add_completion_rules() {
         $mform = & $this->_form;
 
-        return array();
+        return [];
     }
 
     public function completion_rule_enabled($data) {
@@ -137,16 +136,15 @@ class mod_gotomeeting_mod_form extends moodleform_mod {
 
     private function get_gotomeeting_licence() {
         global $DB;
-        $licences = array();
+        $licences = [];
         $gotomeetinglicences = $DB->get_records('gotomeeting_licence', null, 'email');
-        $licence_display = get_config('gotomeeting', 'licence_display');
+        $licencedisplay = get_config('gotomeeting', 'licence_display');
         foreach ($gotomeetinglicences as $gotomeetinglicence) {
-            if($licence_display == 'email'){
-               $licences[$gotomeetinglicence->id] = $gotomeetinglicence->email;  
-            }else{
-                $licences[$gotomeetinglicence->id] = $gotomeetinglicence->first_name .' '.$gotomeetinglicence->last_name; 
+            if ($licencedisplay == 'email') {
+                $licences[$gotomeetinglicence->id] = $gotomeetinglicence->email;
+            } else {
+                $licences[$gotomeetinglicence->id] = $gotomeetinglicence->first_name . ' ' . $gotomeetinglicence->last_name;
             }
-           
         }
         return $licences;
     }

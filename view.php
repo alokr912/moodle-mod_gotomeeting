@@ -34,9 +34,9 @@ if ($id) {
     if (!$cm = get_coursemodule_from_id('gotomeeting', $id)) {
         throw new moodle_exception('invalidcoursemodule');
     }
-    $gotomeeting = $DB->get_record('gotomeeting', array('id' => $cm->instance), '*', MUST_EXIST);
+    $gotomeeting = $DB->get_record('gotomeeting', ['id' => $cm->instance], '*', MUST_EXIST);
 }
-$course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
+$course = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
 $meeturl = '';
 $meetinfo = json_decode($gotomeeting->meetinfo);
 
@@ -49,7 +49,7 @@ require_course_login($course, true, $cm);
 $context = context_module::instance($cm->id);
 require_capability('mod/gotomeeting:view', $context);
 
-$PAGE->set_url('/mod/gotomeeting/view.php', array('id' => $cm->id));
+$PAGE->set_url('/mod/gotomeeting/view.php', ['id' => $cm->id]);
 $PAGE->set_title($course->shortname . ': ' . $gotomeeting->name);
 $PAGE->set_heading($course->fullname);
 

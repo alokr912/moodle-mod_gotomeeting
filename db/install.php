@@ -22,41 +22,5 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 function xmldb_gotomeeting_install() {
-    global $DB, $CFG;
-    $ch = curl_init('https://api.mdlintegration.com/v1/public/gotoinstance');
-    curl_setopt($ch, CURLOPT_POST, true);
-
-    $headers = [
-        'Content-Type: application/json'
-    ];
-    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-
-    $data = array();
-    $data['wwwroot'] = $CFG->wwwroot;
-    $data['siteidentifier'] = $CFG->siteidentifier;
-    $data['country'] = $CFG->country;
-
-    $data['autolang'] = $CFG->autolang;
-    $data['lang'] = $CFG->lang;
-    $data['supportname'] = $CFG->supportname;
-
-    $data['supportemail'] = $CFG->supportemail;
-    $data['release'] = $CFG->release;
-    $data['branch'] = $CFG->branch;
-
-    $data['os'] = $CFG->os;
-    $data['timezone'] = $CFG->timezone;
-    $data['ostype'] = $CFG->ostype;
-
-    curl_setopt($ch, CURLOPT_POSTFIELDS, mod_gotomeeting\GotoOAuth::encode_attributes($data));
-
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-
-    curl_setopt($ch, CURLOPT_VERBOSE, true);
-
-    $serveroutput = curl_exec($ch);
-
-    curl_close($ch);
-
     return true;
 }
