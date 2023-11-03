@@ -22,6 +22,10 @@
  */
 class backup_gotomeeting_activity_structure_step extends backup_activity_structure_step {
 
+    /**
+     * 
+     * @return type
+     */
     protected function define_structure() {
         $gotomeeting = new backup_nested_element('gotomeeting', ['id'],
                 ['course',
@@ -37,7 +41,7 @@ class backup_gotomeeting_activity_structure_step extends backup_activity_structu
             'completionparticipation',
             'meetingpublic',
             'timecreated',
-            'timemodified', ]);
+            'timemodified',]);
 
         $gotomeeting->set_source_table('gotomeeting', ['id' => backup::VAR_ACTIVITYID]);
         return $this->prepare_activity_structure($gotomeeting);

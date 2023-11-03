@@ -13,13 +13,6 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-/**
- * GoToMeeting module manage Authentincation with GoTo
- *
- * @package mod_gotomeeting
- * @copyright 2017 Alok Kumar Rai <alokr.mail@gmail.com,alokkumarrai@outlook.in>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
 
 namespace mod_gotomeeting;
 
@@ -27,6 +20,14 @@ defined('MOODLE_INTERNAL') || die;
 require_once($CFG->libdir . '/filelib.php');
 
 use curl;
+
+/**
+ * GoToMeeting module manage Authentincation with GoTo
+ *
+ * @package mod_gotomeeting
+ * @copyright 2017 Alok Kumar Rai <alokr.mail@gmail.com,alokkumarrai@outlook.in>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 class GotoOAuth {
 
@@ -49,6 +50,11 @@ class GotoOAuth {
     private $consumersecret;
     private $curl;
 
+    /**
+     * 
+     * @global \mod_gotomeeting\type $DB
+     * @param type $licenceid
+     */
     public function __construct($licenceid = null) {
         global $DB;
         $this->curl = new curl();
@@ -62,6 +68,12 @@ class GotoOAuth {
         }
     }
 
+    /**
+     * 
+     * @global type $CFG
+     * @param type $code
+     * @return type
+     */
     public function getaccesstokenwithcode($code) {
         global $CFG;
 
@@ -86,6 +98,11 @@ class GotoOAuth {
         return $this->update_access_token($token, $profile);
     }
 
+    /**
+     * 
+     * @param type $refreshtoken
+     * @return boolean
+     */
     public function getaccesstokenwithrefreshtoken($refreshtoken) {
         $gotowebinarconfig = get_config(self::PLUGIN_NAME);
 
@@ -113,6 +130,10 @@ class GotoOAuth {
         return false;
     }
 
+    /**
+     * 
+     * @return type
+     */
     public function getaccesstoken() {
 
         if (isset($this->accesstokentime) && !empty($this->accesstokentime) &&
@@ -123,6 +144,12 @@ class GotoOAuth {
         }
     }
 
+    /**
+     * 
+     * @param type $endpoint
+     * @param type $data
+     * @return type
+     */
     public function post($endpoint, $data) {
 
         $headers = [
@@ -136,6 +163,12 @@ class GotoOAuth {
         return json_decode($serveroutput);
     }
 
+    /**
+     * 
+     * @param type $endpoint
+     * @param type $data
+     * @return boolean
+     */
     public function put($endpoint, $data) {
 
         $headers = [
@@ -150,6 +183,11 @@ class GotoOAuth {
         return true;
     }
 
+    /**
+     * 
+     * @param type $endpoint
+     * @return type
+     */
     public function get($endpoint) {
 
         $headers = [
@@ -179,6 +217,10 @@ class GotoOAuth {
         return false;
     }
 
+    /**
+     * 
+     * @return type
+     */
     public function getsetupstatus() {
 
         $gotowebinarconfig = get_config(self::PLUGIN_NAME);
@@ -196,6 +238,11 @@ class GotoOAuth {
         return json_decode($serveroutput);
     }
 
+    /**
+     * 
+     * @param type $attributes
+     * @return type
+     */
     public static function encode_attributes($attributes) {
 
         $return = [];
@@ -205,6 +252,11 @@ class GotoOAuth {
         return join('&', $return);
     }
 
+    /**
+     * 
+     * @param type $accesstoken
+     * @return type
+     */
     private function getprofileinfo($accesstoken) {
 
         $headers = [
@@ -217,6 +269,13 @@ class GotoOAuth {
         return json_decode($serveroutput);
     }
 
+    /**
+     * 
+     * @global type $DB
+     * @param type $token
+     * @param type $profile
+     * @return boolean
+     */
     private function update_access_token($token, $profile) {
 
         global $DB;

@@ -23,6 +23,10 @@
  */
 class restore_gotomeeting_activity_structure_step extends restore_activity_structure_step {
 
+    /**
+     * This method define the backup structure
+     * @return type
+     */
     protected function define_structure() {
 
         $paths = [];
@@ -33,6 +37,11 @@ class restore_gotomeeting_activity_structure_step extends restore_activity_struc
         return $this->prepare_activity_structure($paths);
     }
 
+    /**
+     * 
+     * @global type $DB
+     * @param type $data
+     */
     protected function process_gotomeeting($data) {
         global $DB;
 
@@ -48,6 +57,11 @@ class restore_gotomeeting_activity_structure_step extends restore_activity_struc
         $this->apply_activity_instance($newitemid);
     }
 
+    /**
+     * 
+     * @global type $DB
+     * @param type $data
+     */
     protected function process_gotomeeting_registrant($data) {
         global $DB;
 
@@ -58,6 +72,9 @@ class restore_gotomeeting_activity_structure_step extends restore_activity_struc
         $newitemid = $DB->insert_record('gotomeeting_registrant', $data);
     }
 
+    /**
+     * 
+     */
     protected function after_execute() {
         // Add survey related files, no need to match by itemname (just internally handled context).
     }

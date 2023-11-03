@@ -26,10 +26,6 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/mod/gotomeeting/backup/moodle2/restore_gotomeeting_stepslib.php');
 
-/**
- * survey restore task that provides all the settings and steps to perform one
- * complete restore of the activity
- */
 class restore_gotomeeting_activity_task extends restore_activity_task {
 
     /**

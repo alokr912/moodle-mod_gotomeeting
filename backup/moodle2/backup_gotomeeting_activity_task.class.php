@@ -26,14 +26,24 @@ require_once($CFG->dirroot . '/mod/gotomeeting/backup/moodle2/backup_gotomeeting
 
 class backup_gotomeeting_activity_task extends backup_activity_task {
 
+    /**
+     * Define backup settings
+     */
     protected function define_my_settings() {
-
+        
     }
 
+    /**
+     * Define the backup status
+     */
     protected function define_my_steps() {
         $this->add_step(new backup_gotomeeting_activity_structure_step('gotomeeting_structure', 'gotomeeting.xml'));
     }
 
+    /**
+     * Encode all links
+     * 
+     */
     public static function encode_content_links($content) {
         global $CFG;
 
