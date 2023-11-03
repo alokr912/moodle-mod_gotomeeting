@@ -253,7 +253,7 @@ function gotomeeting_delete_instance($id) {
 }
 
 /**
- *
+ * Get GoToMeeting completion state.
  * @param type $course
  * @param type $cm
  * @param type $userid

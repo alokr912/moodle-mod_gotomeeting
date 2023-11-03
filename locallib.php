@@ -24,7 +24,7 @@ defined('MOODLE_INTERNAL') || die;
 require_once($CFG->dirroot . '/mod/gotomeeting/classes/GotoOAuth.php');
 
 /**
- *
+ * Create GoToMeeting instance at GoToMeeting site.
  * @global type $DB
  * @param type $gotomeeting
  * @return boolean
@@ -62,7 +62,7 @@ function creategotomeeting($gotomeeting) {
 }
 
 /**
- *
+ * Update GoToMeeting instance at GoToMeeting site.
  * @global type $DB
  * @param type $oldgotomeeting
  * @param type $gotomeeting
@@ -124,7 +124,7 @@ function deletegotomeeting($gotowebinarid, $gotomeetinglicence) {
 }
 
 /**
- *
+ * Get GoToMeeting instance at GoToMeeting site.
  * @param type $gotomeeting
  * @return type
  * @throws moodle_exception
@@ -152,6 +152,12 @@ function get_gotomeeting($gotomeeting) {
     }
 }
 
+/**
+ * Getting GoTomeeting attendance.
+ * @param type $gotomeeting
+ * @return \html_table
+ * @throws moodle_exception
+ */
 function get_gotomeeting_attendance($gotomeeting) {
 
     $gotooauth = new mod_gotomeeting\GoToOAuth($gotomeeting->gotomeeting_licence);
@@ -192,6 +198,12 @@ function get_gotomeeting_attendance($gotomeeting) {
     return $table;
 }
 
+/**
+ * Preparing GoTomeeting attendance view.
+ * @param type $gotomeeting
+ * @return \html_table
+ * @throws moodle_exception
+ */
 function get_gotomeeting_attendance_view($gotomeeting) {
 
     $gotooauth = new mod_gotomeeting\GoToOAuth($gotomeeting->gotomeeting_licence);
@@ -228,6 +240,12 @@ function get_gotomeeting_attendance_view($gotomeeting) {
     return $table;
 }
 
+/**
+ * Prepare GoToMeeting view.
+ * @param type $gotomeeting
+ * @param type $cmid
+ * @return \html_table
+ */
 function get_gotomeeting_view($gotomeeting, $cmid) {
     $meetinginfo = json_decode($gotomeeting->meetinfo);
     $context = context_module::instance($cmid);
