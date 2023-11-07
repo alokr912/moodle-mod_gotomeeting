@@ -27,8 +27,8 @@ require_once($CFG->dirroot . '/calendar/lib.php');
 require_once($CFG->libdir . '/filelib.php');
 
 /**
- * Provide a customized course module info
- * @param type $coursemodule
+ * Provide a customized course module info.
+ * @param mixed $coursemodule
  * @return \cached_cm_info
  */
 function gotomeeting_get_coursemodule_info($coursemodule) {
@@ -44,11 +44,9 @@ function gotomeeting_get_coursemodule_info($coursemodule) {
 }
 
 /**
- * Add a new module instance
- * @global type $USER
- * @global type $DB
- * @param type $data
- * @param type $mform
+ * Add a new module instance.
+ * @param mixed $data
+ * @param mixed $mform
  * @return boolean
  */
 function gotomeeting_add_instance($data, $mform = null) {
@@ -95,7 +93,7 @@ function gotomeeting_add_instance($data, $mform = null) {
 }
 
 /**
- * List of features supported in Resource module
+ * List of features supported in Resource module.
  * @uses FEATURE_GROUPS
  * @uses FEATURE_GROUPINGS
  * @uses FEATURE_GROUPMEMBERSONLY
@@ -151,8 +149,7 @@ function gotomeeting_supports($feature) {
  * Given an ID of an instance of this module,
  * this function will permanently delete the instance
  * and any data that depends on it.
- *
- * @param int $id Id of the module instance
+ * @param int $gotomeeting Id of the module instance
  * @return boolean Success/Failure
  */
 function gotomeeting_update_instance($gotomeeting) {
@@ -209,8 +206,7 @@ function gotomeeting_update_instance($gotomeeting) {
  * Given an object containing all the necessary data,
  * (defined by the form in mod_form.php) this function
  * will update an existing instance with new data.
- *
- * @param object $adobeconnect An object from the form in mod_form.php
+ * @param object $id An object from the form in mod_form.php
  * @return boolean Success/Fail
  */
 function gotomeeting_delete_instance($id) {
@@ -254,10 +250,10 @@ function gotomeeting_delete_instance($id) {
 
 /**
  * Get GoToMeeting completion state.
- * @param type $course
- * @param type $cm
- * @param type $userid
- * @param type $type
+ * @param mixed $course
+ * @param mixed $cm
+ * @param int $userid
+ * @param string $type
  * @return boolean
  * @throws Exception
  */
@@ -271,8 +267,8 @@ function gotomeeting_get_completion_state($course, $cm, $userid, $type) {
 
 /**
  * Provide list of active license in the system.
- * @param type $licence
- * @return type
+ * @param int $licence
+ * @return string
  */
 function gotomeeting_get_organiser_account_name($licence) {
     global $DB;

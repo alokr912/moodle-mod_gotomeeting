@@ -25,13 +25,11 @@ require_once($CFG->dirroot . '/mod/gotomeeting/classes/GotoOAuth.php');
 
 /**
  * Create GoToMeeting instance at GoToMeeting site.
- * @global type $DB
- * @param type $gotomeeting
+ * @param mixed $gotomeeting
  * @return boolean
  * @throws moodle_exception
  */
 function creategotomeeting($gotomeeting) {
-    global $DB;
 
     $gotooauth = new mod_gotomeeting\GoToOAuth($gotomeeting->licence);
 
@@ -63,14 +61,12 @@ function creategotomeeting($gotomeeting) {
 
 /**
  * Update GoToMeeting instance at GoToMeeting site.
- * @global type $DB
- * @param type $oldgotomeeting
- * @param type $gotomeeting
+ * @param mixed $oldgotomeeting
+ * @param mixed $gotomeeting
  * @return boolean
  * @throws moodle_exception
  */
 function updategotomeeting($oldgotomeeting, $gotomeeting) {
-    global $DB;
 
     $result = false;
 
@@ -102,9 +98,9 @@ function updategotomeeting($oldgotomeeting, $gotomeeting) {
 }
 
 /**
- *
- * @param type $gotowebinarid
- * @param type $gotomeetinglicence
+ * Delete meeting from gotomeeting server.
+ * @param int $gotowebinarid
+ * @param int $gotomeetinglicence
  * @return boolean
  * @throws moodle_exception
  */
@@ -125,8 +121,8 @@ function deletegotomeeting($gotowebinarid, $gotomeetinglicence) {
 
 /**
  * Get GoToMeeting instance at GoToMeeting site.
- * @param type $gotomeeting
- * @return type
+ * @param mixed $gotomeeting
+ * @return string
  * @throws moodle_exception
  */
 function get_gotomeeting($gotomeeting) {
@@ -154,7 +150,7 @@ function get_gotomeeting($gotomeeting) {
 
 /**
  * Getting GoTomeeting attendance.
- * @param type $gotomeeting
+ * @param string $gotomeeting
  * @return \html_table
  * @throws moodle_exception
  */
@@ -200,7 +196,7 @@ function get_gotomeeting_attendance($gotomeeting) {
 
 /**
  * Preparing GoTomeeting attendance view.
- * @param type $gotomeeting
+ * @param mixed $gotomeeting
  * @return \html_table
  * @throws moodle_exception
  */
@@ -242,8 +238,8 @@ function get_gotomeeting_attendance_view($gotomeeting) {
 
 /**
  * Prepare GoToMeeting view.
- * @param type $gotomeeting
- * @param type $cmid
+ * @param mixed $gotomeeting
+ * @param int $cmid
  * @return \html_table
  */
 function get_gotomeeting_view($gotomeeting, $cmid) {

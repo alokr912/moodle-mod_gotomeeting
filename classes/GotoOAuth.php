@@ -28,32 +28,96 @@ use curl;
  * @copyright 2017 Alok Kumar Rai <alokr.mail@gmail.com,alokkumarrai@outlook.in>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 class GotoOAuth {
 
+    /**
+     * @var string
+     */
     public const BASE_URL = "https://api.getgo.com";
+
+    /**
+     * @var string
+     */
     public const OAUTH_URL = "https://authentication.logmeininc.com";
+
+    /**
+     * @var string
+     */
     public const PLUGIN_NAME = "gotomeeting";
+
+    /**
+     * @var string
+     */
     public const ACCESS_TOKEN = "access_token";
+
+    /**
+     * @var string
+     */
     public const REFRESH_TOKEN = "refresh_token";
+
+    /**
+     * @var string
+     */
     public const ORGANISER_KEY = "organizer_key";
+
+    /**
+     * @var string
+     */
     public const ACCOUNT_KEY = "account_key";
+
+    /**
+     * @var string
+     */
     public const ACCESS_TOKEN_TIME = "access_token_time";
+
+    /**
+     * @var string
+     */
     public const EXPIRY_TIME_IN_SECOND = 3500;
 
+    /**
+     * @var string
+     */
     private $accesstoken;
+
+    /**
+     * @var string
+     */
     private $refreshtoken;
+
+    /**
+     * @var string
+     */
     public $organizerkey;
+
+    /**
+     * @var string
+     */
     private $accountkey;
+
+    /**
+     * @var string
+     */
     private $accesstokentime;
+
+    /**
+     * @var string
+     */
     private $consumerkey;
+
+    /**
+     * @var string
+     */
     private $consumersecret;
+
+    /**
+     * @var string
+     */
     private $curl;
 
     /**
-     * 
-     * @global \mod_gotomeeting\type $DB
-     * @param type $licenceid
+     * Constructor for the GotoOAuth .
+     * @param int $licenceid
      */
     public function __construct($licenceid = null) {
         global $DB;
@@ -69,10 +133,9 @@ class GotoOAuth {
     }
 
     /**
-     * 
-     * @global type $CFG
-     * @param type $code
-     * @return type
+     * Get accesstoken with code.
+     * @param string $code
+     * @return Boolean
      */
     public function getaccesstokenwithcode($code) {
         global $CFG;
@@ -99,8 +162,8 @@ class GotoOAuth {
     }
 
     /**
-     * 
-     * @param type $refreshtoken
+     * Get access token from refresh token
+     * @param string $refreshtoken
      * @return boolean
      */
     public function getaccesstokenwithrefreshtoken($refreshtoken) {
@@ -131,8 +194,8 @@ class GotoOAuth {
     }
 
     /**
-     * 
-     * @return type
+     * This method return a valid access token.
+     * @return string
      */
     public function getaccesstoken() {
 
@@ -145,10 +208,10 @@ class GotoOAuth {
     }
 
     /**
-     * 
-     * @param type $endpoint
-     * @param type $data
-     * @return type
+     * This method send data to goto server.
+     * @param string $endpoint
+     * @param mixed $data
+     * @return mixed
      */
     public function post($endpoint, $data) {
 
@@ -164,9 +227,9 @@ class GotoOAuth {
     }
 
     /**
-     * 
-     * @param type $endpoint
-     * @param type $data
+     * This method send data to goto server.
+     * @param string $endpoint
+     * @param mixed $data
      * @return boolean
      */
     public function put($endpoint, $data) {
@@ -184,9 +247,9 @@ class GotoOAuth {
     }
 
     /**
-     * 
-     * @param type $endpoint
-     * @return type
+     * This method send data to goto server.
+     * @param string $endpoint
+     * @return mixed
      */
     public function get($endpoint) {
 
@@ -201,6 +264,12 @@ class GotoOAuth {
         return json_decode($serveroutput);
     }
 
+    /**
+     * This method send data to goto server.
+     * @param string $endpoint
+     * @param mixed $data
+     * @return boolean
+     */
     public function delete($endpoint, $data = null) {
 
         $headers = [
@@ -218,8 +287,8 @@ class GotoOAuth {
     }
 
     /**
-     * 
-     * @return type
+     * This method get the status of setting.
+     * @return mixed
      */
     public function getsetupstatus() {
 
@@ -239,9 +308,9 @@ class GotoOAuth {
     }
 
     /**
-     * 
-     * @param type $attributes
-     * @return type
+     * This method encode url params attributes.
+     * @param array $attributes
+     * @return string
      */
     public static function encode_attributes($attributes) {
 
@@ -253,9 +322,9 @@ class GotoOAuth {
     }
 
     /**
-     * 
-     * @param type $accesstoken
-     * @return type
+     * Get the user profile info.
+     * @param mixed $accesstoken
+     * @return mixed
      */
     private function getprofileinfo($accesstoken) {
 
@@ -270,10 +339,9 @@ class GotoOAuth {
     }
 
     /**
-     * 
-     * @global type $DB
-     * @param type $token
-     * @param type $profile
+     * This method updated the access token
+     * @param string $token
+     * @param mixed $profile
      * @return boolean
      */
     private function update_access_token($token, $profile) {

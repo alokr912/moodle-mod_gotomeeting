@@ -24,8 +24,8 @@
 class restore_gotomeeting_activity_structure_step extends restore_activity_structure_step {
 
     /**
-     * This method define the backup structure
-     * @return type
+     * This method define the backup structure.
+     * @return mixed
      */
     protected function define_structure() {
 
@@ -38,9 +38,8 @@ class restore_gotomeeting_activity_structure_step extends restore_activity_struc
     }
 
     /**
-     * 
-     * @global type $DB
-     * @param type $data
+     * Restore processing.
+     * @param mixed $data
      */
     protected function process_gotomeeting($data) {
         global $DB;
@@ -58,9 +57,8 @@ class restore_gotomeeting_activity_structure_step extends restore_activity_struc
     }
 
     /**
-     * 
-     * @global type $DB
-     * @param type $data
+     * Process registrant details.
+     * @param mixed $data
      */
     protected function process_gotomeeting_registrant($data) {
         global $DB;
@@ -73,7 +71,7 @@ class restore_gotomeeting_activity_structure_step extends restore_activity_struc
     }
 
     /**
-     * 
+     * After execute hook.
      */
     protected function after_execute() {
         // Add survey related files, no need to match by itemname (just internally handled context).

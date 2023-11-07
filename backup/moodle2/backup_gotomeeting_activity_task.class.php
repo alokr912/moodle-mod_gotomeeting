@@ -24,13 +24,18 @@
 defined('MOODLE_INTERNAL') || die;
 require_once($CFG->dirroot . '/mod/gotomeeting/backup/moodle2/backup_gotomeeting_stepslib.php');
 
+/**
+ * GoToMeeting activity access class.
+ * @package mod_gotomeeting
+ * @copyright 2017 Alok Kumar Rai <alokr.mail@gmail.com,alokkumarrai@outlook.in>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class backup_gotomeeting_activity_task extends backup_activity_task {
 
     /**
      * Define backup settings
      */
     protected function define_my_settings() {
-        
     }
 
     /**
@@ -41,8 +46,8 @@ class backup_gotomeeting_activity_task extends backup_activity_task {
     }
 
     /**
-     * Encode all links
-     * 
+     * Encode all links.
+     * @param string $content
      */
     public static function encode_content_links($content) {
         global $CFG;
