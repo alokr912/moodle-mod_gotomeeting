@@ -25,6 +25,7 @@ require('../../config.php');
 require_once('lib.php');
 require_once($CFG->dirroot . '/mod/gotomeeting/locallib.php');
 require_once($CFG->libdir . '/completionlib.php');
+require_once($CFG->libdir.'/tablelib.php');
 global $DB, $USER;
 $id = required_param('id', PARAM_INT); // Course Module ID.
 
@@ -49,7 +50,7 @@ echo $OUTPUT->heading(get_string('modulename', 'gotomeeting') . ' : ' . $gotomee
 $table = get_gotomeeting_attendance($gotomeeting);
 
 if ($table) {
-    echo html_writer::table($table);
+    $table->print_html();
 } else {
     echo 'No Attendance found';
 }

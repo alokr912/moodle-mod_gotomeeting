@@ -53,7 +53,7 @@ function gotomeeting_add_instance($data, $mform = null) {
 
     global $USER, $DB;
     $response = creategotomeeting($data);
-
+    
     if ($response) {
         $data->userid = $USER->id;
         $data->timecreated = time();

@@ -1,4 +1,5 @@
 <?php
+
 // This file is part of the GoToMeeting plugin for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -22,6 +23,8 @@
  */
 defined('MOODLE_INTERNAL') || die;
 require_once($CFG->dirroot . '/mod/gotomeeting/classes/GotoOAuth.php');
+
+use mod_gotomeeting\GoToOAuth as GoToOAuth;
 
 /**
  * Create GoToMeeting instance at GoToMeeting site.
@@ -155,6 +158,9 @@ function get_gotomeeting($gotomeeting) {
  * @throws moodle_exception
  */
 function get_gotomeeting_attendance($gotomeeting) {
+    global $PAGE;
+    $tdir = optional_param('tdir', 3, PARAM_INT);
+    $tsort = optional_param('tsort', 'name', PARAM_ALPHAEXT);
 
     $gotooauth = new mod_gotomeeting\GoToOAuth($gotomeeting->gotomeeting_licence);
     if (!isset($gotooauth->organizerkey) || empty($gotooauth->organizerkey)) {
@@ -168,14 +174,21 @@ function get_gotomeeting_attendance($gotomeeting) {
 
     $duration = $gotomeeting->enddatetime - $gotomeeting->startdatetime;
 
-    $table = new html_table();
+    $table = new flexible_table('mod-gotomeeting-attendance-table');
 
-    $table->head = [get_string('name', 'gotomeeting'), get_string('email', 'gotomeeting'), get_string('jointime', 'gotomeeting'),
-        get_string('leavetime', 'gotomeeting'), get_string('completedpercentage', 'gotomeeting'), ];
+    $table->define_headers([get_string('name', 'gotomeeting'), get_string('email', 'gotomeeting'), get_string('jointime', 'gotomeeting'),
+        get_string('leavetime', 'gotomeeting'), get_string('duration', 'gotomeeting'), get_string('completedpercentage', 'gotomeeting'),]);
 
+    $table->define_columns(array('name', 'email', 'jointime', 'leavetime', 'duration', 'completedpercentage'));
+    $table->sortable(true, $tsort, $tdir);
+    $table->define_baseurl($PAGE->url);
+    $table->set_attribute('id', 'mod-gotomeeting-attendance-table');
+    $table->set_attribute('class', 'admintable generaltable');
+    $table->setup();
     $rows = [];
+ 
     foreach ($response as $attendance) {
-
+        //  print_object($attendance);die;
         $jointime = strtotime($attendance->joinTime);
         $leavetime = strtotime($attendance->leaveTime);
         $differenceinseconds = $leavetime - $jointime;
@@ -186,10 +199,14 @@ function get_gotomeeting_attendance($gotomeeting) {
         }
 
         $rows[] = [$attendance->attendeeName, $attendance->email, $attendance->joinTime,
-            $attendance->leaveTime, $attendancepercentage, ];
+            $attendance->leaveTime, $attendance->duration, $attendancepercentage,];
     }
 
-    $table->data = $rows;
+    foreach ($rows as $row) {
+        $table->add_data($row);
+    }
+
+
 
     return $table;
 }
@@ -214,7 +231,7 @@ function get_gotomeeting_attendance_view($gotomeeting) {
     $table = new html_table();
 
     $table->head = [get_string('attendee', 'gotomeeting'), get_string('jointime', 'gotomeeting'),
-        get_string('leavetime', 'gotomeeting'), get_string('completedpercentage', 'gotomeeting'), ];
+        get_string('leavetime', 'gotomeeting'), get_string('completedpercentage', 'gotomeeting'),];
 
     $rows = [];
     foreach ($response as $attendance) {
@@ -288,5 +305,38 @@ function get_gotomeeting_view($gotomeeting, $cmid) {
     $cell2->style = 'text-align:center;';
     $table->data[] = [$cell2];
 
+    if ($link = trim(get_gotomeeting_recoprding($gotomeeting))) {
+        $cell3 = new html_table_cell(html_writer::link($link,
+                        get_string('recording_download_url', 'gotomeeting'), ["target" => "_blank", 'class' => 'btn btn-primary']));
+        $cell3->colspan = 7;
+        $cell3->style = 'text-align:center;';
+        $table->data[] = [$cell3];
+    }
     return $table;
+}
+
+function get_gotomeeting_recoprding($gotomeeting) {
+    $gotooauth = new mod_gotomeeting\GoToOAuth($gotomeeting->gotomeeting_licence);
+    if (!isset($gotooauth->organizerkey) || empty($gotooauth->organizerkey)) {
+        throw new moodle_exception('incompletesetup', 'gotomeeting');
+    }
+    $dstoffset = dst_offset_on($gotomeeting->startdatetime, get_user_timezone());
+    $sdate = usergetdate(usertime($gotomeeting->startdatetime - $dstoffset));
+    $startDate = $sdate['year'] . '-' . $sdate['mon'] . '-' . $sdate['mday'] . 'T' .
+            $sdate['hours'] . ':' . $sdate['minutes'] . ':' . $sdate['seconds'] . 'Z';
+    $edate = usergetdate(usertime($gotomeeting->enddatetime - $dstoffset));
+    $endDate = $edate['year'] . '-' . $edate['mon'] . '-' . $edate['mday'] . 'T' .
+            $edate['hours'] . ':' . $edate['minutes'] . ':' . $edate['seconds'] . 'Z';
+
+    $response = $gotooauth->get("/G2M/rest/organizers/$gotooauth->organizerkey/historicalMeetings?startDate=$startDate&endDate=$endDate");
+
+    if (is_array($response)) {
+        foreach ($response as $meeting) {
+            if ($meeting->meetingId == $gotomeeting->gotomeetingid && !empty($meeting->recording) && !empty($meeting->recording->downloadUrl)) {
+                return $meeting->recording->downloadUrl;
+            }
+        }
+    } else {
+        return null;
+    }
 }
