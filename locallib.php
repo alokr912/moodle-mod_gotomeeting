@@ -140,7 +140,7 @@ function get_gotomeeting($gotomeeting) {
             has_capability('mod/gotomeeting:presenter', $context)) {
 
         $response = $gotooauth->get("/G2M/rest/meetings/{$gotomeeting->gotomeetingid}/start");
-
+       
         if ($response) {
             return $response->hostURL;
         }
@@ -180,7 +180,8 @@ function get_gotomeeting_attendance($gotomeeting) {
         get_string('leavetime', 'gotomeeting'), get_string('duration', 'gotomeeting'), get_string('completedpercentage', 'gotomeeting'),]);
 
     $table->define_columns(array('name', 'email', 'jointime', 'leavetime', 'duration', 'completedpercentage'));
-    $table->sortable(true, $tsort, $tdir);
+    //$table->sortable(true, $tsort, $tdir);
+    $table->sortable(true, 'name', SORT_DESC);
     $table->define_baseurl($PAGE->url);
     $table->set_attribute('id', 'mod-gotomeeting-attendance-table');
     $table->set_attribute('class', 'admintable generaltable');
@@ -301,35 +302,35 @@ function get_gotomeeting_view($gotomeeting, $cmid) {
 
     $cell2 = new html_table_cell(html_writer::link(trim(get_gotomeeting($gotomeeting), '"'),
                     get_string('join_url', 'gotomeeting'), ["target" => "_blank", 'class' => 'btn btn-primary']));
-    $cell2->colspan = 7;
+    $cell2->colspan = 8;
     $cell2->style = 'text-align:center;';
     $table->data[] = [$cell2];
 
-    if ($link = trim(get_gotomeeting_recoprding($gotomeeting))) {
+    if ($link = trim(get_gotomeeting_recording($gotomeeting))) {
         $cell3 = new html_table_cell(html_writer::link($link,
                         get_string('recording_download_url', 'gotomeeting'), ["target" => "_blank", 'class' => 'btn btn-primary']));
-        $cell3->colspan = 7;
+        $cell3->colspan = 8;
         $cell3->style = 'text-align:center;';
         $table->data[] = [$cell3];
     }
     return $table;
 }
 
-function get_gotomeeting_recoprding($gotomeeting) {
+function get_gotomeeting_recording($gotomeeting) {
     $gotooauth = new mod_gotomeeting\GoToOAuth($gotomeeting->gotomeeting_licence);
     if (!isset($gotooauth->organizerkey) || empty($gotooauth->organizerkey)) {
         throw new moodle_exception('incompletesetup', 'gotomeeting');
     }
     $dstoffset = dst_offset_on($gotomeeting->startdatetime, get_user_timezone());
-    $sdate = usergetdate(usertime($gotomeeting->startdatetime - $dstoffset));
+    $sdate = usergetdate(usertime($gotomeeting->startdatetime - $dstoffset-1000));
     $startDate = $sdate['year'] . '-' . $sdate['mon'] . '-' . $sdate['mday'] . 'T' .
             $sdate['hours'] . ':' . $sdate['minutes'] . ':' . $sdate['seconds'] . 'Z';
-    $edate = usergetdate(usertime($gotomeeting->enddatetime - $dstoffset));
+    $edate = usergetdate(usertime($gotomeeting->enddatetime - $dstoffset+1000));
     $endDate = $edate['year'] . '-' . $edate['mon'] . '-' . $edate['mday'] . 'T' .
             $edate['hours'] . ':' . $edate['minutes'] . ':' . $edate['seconds'] . 'Z';
 
     $response = $gotooauth->get("/G2M/rest/organizers/$gotooauth->organizerkey/historicalMeetings?startDate=$startDate&endDate=$endDate");
-
+    
     if (is_array($response)) {
         foreach ($response as $meeting) {
             if ($meeting->meetingId == $gotomeeting->gotomeetingid && !empty($meeting->recording) && !empty($meeting->recording->downloadUrl)) {
