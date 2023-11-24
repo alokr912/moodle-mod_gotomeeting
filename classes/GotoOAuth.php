@@ -372,6 +372,9 @@ class GotoOAuth {
                 $licence->access_token = $token->access_token;
                 $licence->timemodified = time();
                 $licence->access_token_time = time();
+                if(isset($token->refresh_token) && !empty($token->refresh_token)){
+                     $licence->refresh_token = $token->refresh_token;
+                }
 
                 $DB->update_record('gotomeeting_licence', $licence);
             }

@@ -140,7 +140,7 @@ function get_gotomeeting($gotomeeting) {
             has_capability('mod/gotomeeting:presenter', $context)) {
 
         $response = $gotooauth->get("/G2M/rest/meetings/{$gotomeeting->gotomeetingid}/start");
-       
+
         if ($response) {
             return $response->hostURL;
         }
@@ -187,7 +187,7 @@ function get_gotomeeting_attendance($gotomeeting) {
     $table->set_attribute('class', 'admintable generaltable');
     $table->setup();
     $rows = [];
- 
+
     foreach ($response as $attendance) {
         //  print_object($attendance);die;
         $jointime = strtotime($attendance->joinTime);
@@ -322,15 +322,15 @@ function get_gotomeeting_recording($gotomeeting) {
         throw new moodle_exception('incompletesetup', 'gotomeeting');
     }
     $dstoffset = dst_offset_on($gotomeeting->startdatetime, get_user_timezone());
-    $sdate = usergetdate(usertime($gotomeeting->startdatetime - $dstoffset-1000));
+    $sdate = usergetdate(usertime($gotomeeting->startdatetime - $dstoffset - 1000));
     $startDate = $sdate['year'] . '-' . $sdate['mon'] . '-' . $sdate['mday'] . 'T' .
             $sdate['hours'] . ':' . $sdate['minutes'] . ':' . $sdate['seconds'] . 'Z';
-    $edate = usergetdate(usertime($gotomeeting->enddatetime - $dstoffset+1000));
+    $edate = usergetdate(usertime($gotomeeting->enddatetime - $dstoffset + 1000));
     $endDate = $edate['year'] . '-' . $edate['mon'] . '-' . $edate['mday'] . 'T' .
             $edate['hours'] . ':' . $edate['minutes'] . ':' . $edate['seconds'] . 'Z';
 
     $response = $gotooauth->get("/G2M/rest/organizers/$gotooauth->organizerkey/historicalMeetings?startDate=$startDate&endDate=$endDate");
-    
+
     if (is_array($response)) {
         foreach ($response as $meeting) {
             if ($meeting->meetingId == $gotomeeting->gotomeetingid && !empty($meeting->recording) && !empty($meeting->recording->downloadUrl)) {
@@ -340,4 +340,52 @@ function get_gotomeeting_recording($gotomeeting) {
     } else {
         return null;
     }
+}
+
+/**
+ * Getting GoTomeeting attendance.
+ * @param string $gotomeeting
+ * @return \html_table
+ * @throws moodle_exception
+ */
+function get_gotomeeting_attendance_data($gotomeeting) {
+    global $PAGE;
+
+    $gotooauth = new mod_gotomeeting\GoToOAuth($gotomeeting->gotomeeting_licence);
+    if (!isset($gotooauth->organizerkey) || empty($gotooauth->organizerkey)) {
+        throw new moodle_exception('incompletesetup', 'gotomeeting');
+    }
+
+    $response = $gotooauth->get("/G2M/rest/meetings/{$gotomeeting->gotomeetingid}/attendees");
+    if (!is_array($response)) {
+        return null;
+    }
+
+    $duration = $gotomeeting->enddatetime - $gotomeeting->startdatetime;
+
+    $rows = [];
+
+    foreach ($response as $attendance) {
+       
+        $jointime = strtotime($attendance->joinTime);
+        $leavetime = strtotime($attendance->leaveTime);
+        $differenceinseconds = $leavetime - $jointime;
+
+        $attendancepercentage = 0;
+        if ($differenceinseconds) {
+            $attendancepercentage = number_format(($attendance->duration * 60 * 100) / $duration, 2);
+        }
+
+        $rows[] = ['name' => $attendance->attendeeName, 'email' => $attendance->email, 'jointime' => $attendance->joinTime,
+            'leavetime' => $attendance->leaveTime, 'duration' => $attendance->duration, 'completedpercentage' => $attendancepercentage,];
+    }
+    $data = [['header' => [['key' => 'name', 'label' => get_string('name', 'gotomeeting'), 'sortable' => true],
+        ['key' => 'email', 'label' => get_string('email', 'gotomeeting'), 'sortable' => true],
+        ['key' => 'jointime', 'label' => get_string('jointime', 'gotomeeting'), 'sortable' => true],
+        ['key' => 'leavetime', 'label' => get_string('leavetime', 'gotomeeting'), 'sortable' => true],
+        ['key' => 'duration', 'label' => get_string('duration', 'gotomeeting'), 'sortable' => true],
+        ['key' => 'completedpercentage', 'label' => get_string('completedpercentage', 'gotomeeting'), 'sortable' => true],
+    ], 'data' => $rows]];
+
+    return $data;
 }

@@ -28,7 +28,7 @@ require_once($CFG->libdir . '/completionlib.php');
 require_once($CFG->libdir.'/tablelib.php');
 global $DB, $USER;
 $id = required_param('id', PARAM_INT); // Course Module ID.
-
+ 
 if ($id) {
     if (!$cm = get_coursemodule_from_id('gotomeeting', $id)) {
         throw new coding_exception('invalidcoursemodule');
@@ -40,21 +40,14 @@ $course = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
 require_course_login($course, true, $cm);
 $context = context_module::instance($cm->id);
 require_capability('mod/gotomeeting:view', $context);
-
+$PAGE->requires->js_init_call('M.mod_gotomeeting.attendance', get_gotomeeting_attendance_data($gotomeeting));
 $PAGE->set_url('/mod/gotomeeting/attendance.php', ['id' => $cm->id]);
 $PAGE->set_title($course->shortname . ': ' . $gotomeeting->name);
 $PAGE->set_heading($course->fullname);
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('modulename', 'gotomeeting') . ' : ' . $gotomeeting->name);
-$table = get_gotomeeting_attendance($gotomeeting);
 
-if ($table) {
-    $table->print_html();
-} else {
-    echo 'No Attendance found';
-}
-
-
+echo html_writer::div("",null,array('id'=>'attendance'));
 
 echo $OUTPUT->footer();
