@@ -334,7 +334,7 @@ function get_gotomeeting_recording($gotomeeting) {
     if (is_array($response)) {
         foreach ($response as $meeting) {
             if ($meeting->meetingId == $gotomeeting->gotomeetingid && !empty($meeting->recording) && !empty($meeting->recording->downloadUrl)) {
-                return $meeting->recording->downloadUrl;
+                return $meeting->recording->shareUrl;
             }
         }
     } else {
