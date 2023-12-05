@@ -367,6 +367,7 @@ function get_gotomeeting_attendance_data($gotomeeting) {
 
     foreach ($response as $attendance) {
        
+     
         $jointime = strtotime($attendance->joinTime);
         $leavetime = strtotime($attendance->leaveTime);
         $differenceinseconds = $leavetime - $jointime;
@@ -374,10 +375,14 @@ function get_gotomeeting_attendance_data($gotomeeting) {
         $attendancepercentage = 0;
         if ($differenceinseconds) {
             $attendancepercentage = number_format(($attendance->duration * 60 * 100) / $duration, 2);
+            if($attendancepercentage >100){
+              $attendancepercentage =100;  
+            }
         }
-
-        $rows[] = ['name' => $attendance->attendeeName, 'email' => $attendance->email, 'jointime' => $attendance->joinTime,
-            'leavetime' => $attendance->leaveTime, 'duration' => $attendance->duration, 'completedpercentage' => $attendancepercentage,];
+       $userJointime=userdate(strtotime($attendance->joinTime)+getusertimeoffset(get_user_timezone()));
+       $userLeavetime =userdate(strtotime($attendance->leaveTime)+getusertimeoffset(get_user_timezone()));
+        $rows[] = ['name' => $attendance->attendeeName, 'email' => $attendance->email, 'jointime' => $userJointime,
+            'leavetime' => $userLeavetime, 'duration' => $attendance->duration, 'completedpercentage' => $attendancepercentage,];
     }
     $data = [['header' => [['key' => 'name', 'label' => get_string('name', 'gotomeeting'), 'sortable' => true],
         ['key' => 'email', 'label' => get_string('email', 'gotomeeting'), 'sortable' => true],
@@ -386,6 +391,15 @@ function get_gotomeeting_attendance_data($gotomeeting) {
         ['key' => 'duration', 'label' => get_string('duration', 'gotomeeting'), 'sortable' => true],
         ['key' => 'completedpercentage', 'label' => get_string('completedpercentage', 'gotomeeting'), 'sortable' => true],
     ], 'data' => $rows]];
-
+    
     return $data;
+}
+
+
+function getusertimeoffset($timezone) {
+    $userdate = new DateTime();
+    $userdate->setTimezone(core_date::get_user_timezone_object($timezone));
+    
+
+    return $userdate->getOffset() ;
 }
